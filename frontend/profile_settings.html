@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Profile Settings</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/public/build/css/tailwind.css" />
+</head>
+
+<body>
+    <!--
+  Tailwind UI components require Tailwind CSS v1.8 and the @tailwindcss/ui plugin.
+  Read the documentation to get started: https://tailwindui.com/documentation
+-->
+    <div class="flex flex-col bg-gray-800">
+        <div class="flex flex-col h-screen bg-gray-900">
+            <nav class="bg-gray-800">
+                <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+                  <div class="relative flex items-center justify-between h-16">
+                    <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                      <!-- Mobile menu button-->
+                      
+                    </div>
+                    <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
+                      <div class="flex-shrink-0">
+                        <img class="block lg:hidden h-8 w-auto" src="/public/assets/logo.png" alt="wK logo">
+                        <img class="hidden lg:block h-8 w-auto" src="/public/assets/logo.png" alt="wK logo">
+                      </div>
+                      <div class="hidden sm:block sm:ml-6">
+                        
+                      </div>
+                    </div>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                      <button class="p-1 border-2 border-transparent text-gray-400 rounded-full hover:text-white focus:outline-none focus:text-white focus:bg-gray-700 transition duration-150 ease-in-out" aria-label="Notifications">
+                        <!-- Heroicon name: bell -->
+                        
+                      </button>
+              
+                      <!-- Profile dropdown -->
+                      <div class="ml-3 relative">
+                        <div>
+                          
+                        </div>
+                        <!--
+                          Profile dropdown panel, show/hide based on dropdown state.
+              
+                          Entering: "transition ease-out duration-100"
+                            From: "transform opacity-0 scale-95"
+                            To: "transform opacity-100 scale-100"
+                          Leaving: "transition ease-in duration-75"
+                            From: "transform opacity-100 scale-100"
+                            To: "transform opacity-0 scale-95"
+                        -->
+                        <div class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+                <!--
+                  Mobile menu, toggle classes based on menu state.
+              
+                  Menu open: "block", Menu closed: "hidden"
+                -->
+                <div class="hidden sm:hidden">
+                </div>
+              </nav>
+            <main class="profile-page">
+                <section class="relative block h-1/3" style="height: 300px">
+                    <div class="absolute top-0 w-full bg-center bg-cover">
+                        <p class="text-white mt-6 text-3xl text-center">Profile Settings</p>
+                        <div class="flex mt-4 justify-center">
+                            <div class="w-16 h-1 rounded-full bg-purple-500 inline-flex"></div>
+                        </div>
+                        <span id="blackOverlay" class="w-full h-full absolute opacity-50 bg-gray-900"></span>
+                    </div>
+                </section>
+                <section class="relative py-24 bg-gray-800">
+                    <div class="container mx-auto px-4">
+                        <div
+                            class="relative flex flex-col min-w-0 break-words bg-white w- mb-6 shadow-2xl rounded-lg -mt-64">
+                            <!--<h1 class="mt-16 text-3xl font-semibold" style="padding-left: 5.5rem;">Sign Up</h1>-->
+                            <section class="text-gray-700 body-font relative px-5">
+                                <div class="container px-5 mb-5 mx-auto flex sm:flex-no-wrap flex-wrap">
+                                    <div
+                                        class="lg:w-5/12 md:w-5/12 sm:w-5/12 bg-white flex flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0">
+                                        <p class="font-semibold text-lg mb-6 mt-2">Login Details</p>
+                                        <input
+                                            class="bg-white rounded border border-gray-400 focus:outline-none focus:border-purple-500 text-base px-4 py-2 mb-4 tracking-widest font-mono"
+                                            placeholder="Name" type="text">
+                                        <input
+                                            class="bg-white rounded border border-gray-400 focus:outline-none focus:border-purple-500 text-base px-4 py-2 mb-4 tracking-widest font-mono"
+                                            placeholder="Email" type="email">
+                                        <input
+                                            class="bg-white rounded border border-gray-400 focus:outline-none focus:border-purple-500 text-base px-4 py-2 mb-4 tracking-widest font-mono"
+                                            placeholder="Username">
+                                        <p class="font-semibold text-lg mb-2 mt-2">About Me</p>
+                                        <p class="font-thin mb-4">A short description about you.</p>
+                                        <textarea
+                                            class="bg-white rounded border border-gray-400 focus:outline-none h-32 focus:border-purple-500 text-base px-4 py-2 mb-4 resize-none"
+                                            placeholder="Bio"></textarea>
+
+                                        <div class="block">
+                                            <p class="font-semibold text-lg mb-2 mt-2">A few more things:</p>
+                                            <div class="mt-2">
+                                                <div>
+                                                <label class="inline-flex items-center">
+                                                    <input type="checkbox" class="form-checkbox text-indigo-600" checked>
+                                                    <span class="ml-2 font-thin">I am more than 18 years old (for content tailoring)</span>
+                                                </label>
+                                                </div>
+                                                <p class="mt-4 mb-2">Privacy options</p>
+                                                <div>
+                                                <label class="inline-flex items-center">
+                                                    <input type="checkbox" class="form-checkbox text-green-500" checked>
+                                                    <span class="font-thin ml-2">Show my name to others</span>
+                                                </label>
+                                                </div>
+                                                <div>
+                                                <label class="inline-flex items-center">
+                                                    <input type="checkbox" class="form-checkbox text-pink-600" checked>
+                                                    <span class="font-thin ml-2">Show my bio to others</span>
+                                                </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            class="text-white bg-purple-500 border-0 mt-6 py-2 px-6 focus:outline-none hover:bg-purple-600 rounded text-lg">Apply</button>
+                                        <p class="text-xs text-gray-500 mt-3">By signing up, you agree with our <a
+                                                href="#" class="text-indigo-500 hover:text-indigo-800">terms of
+                                                service.</a></p>
+                                    </div>
+                                    <!-- Interests -->
+                                    <div
+                                        class="lg:w-5/12 md:w-1/2 sm:w-5/12 sm:ml-10 bg-white flex flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0">
+                                        <p class="font-semibold text-lg mb-1 mt-2">Interests</p>
+                                        <p class="font-thin leading-5">Select the topics you're interested in.</p>
+                                        <p class="font-thin mb-4">This will help us personalize your feed.</p>
+                                        <!-- Interest Card -->
+                                        <div class="xl:w-2/3 md:w-2/3 mt-2">
+                                            <div
+                                                class="border border-gray-300 font-sans hover:border-indigo-600 px-6 py-3 rounded-lg">
+                                                <!--<div class="w-10 h-10 inline-flex items-center justify-center rounded-full bg-purple-100 text-purple-500 mb-4">
+                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-6 h-6" viewBox="0 0 24 24">
+                                  <circle cx="6" cy="6" r="3"></circle>
+                                  <circle cx="6" cy="18" r="3"></circle>
+                                  <path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"></path>
+                                </svg>
+                              </div>-->
+                                                <h2 class="text-base text-gray-900  title-font">Poems</h2>
+                                            </div>
+                                        </div>
+                                        <div class="xl:w-2/3 md:w-2/3 mt-2">
+                                            <div
+                                                class="border border-gray-300 hover:border-indigo-600 px-6 py-3 rounded-lg">
+                                                <h2 class="text-base text-gray-900  title-font">Short stories</h2>
+                                            </div>
+                                        </div>
+                                        <div class="xl:w-2/3 md:w-2/3 mt-2">
+                                            <div
+                                                class="border border-gray-300 hover:border-indigo-600 px-6 py-3 rounded-lg">
+                                                <h2 class="text-base text-gray-900  title-font">Prose</h2>
+                                            </div>
+                                        </div>
+                                        <div class="xl:w-2/3 md:w-2/3 mt-2">
+                                            <div
+                                                class="border border-gray-300 hover:border-indigo-600 px-6 py-3 rounded-lg">
+                                                <h2 class="text-base text-gray-900  title-font">Compositions</h2>
+                                            </div>
+                                        </div>
+                                        <div class="xl:w-2/3 md:w-2/3 mt-2">
+                                            <div
+                                                class="border border-gray-300 hover:border-indigo-600 px-6 py-3 rounded-lg">
+                                                <h2 class="text-base text-gray-900  title-font">Short stories</h2>
+                                            </div>
+                                        </div>
+                                        <div class="xl:w-2/3 md:w-2/3 mt-2">
+                                            <div
+                                                class="border border-gray-300 hover:border-indigo-600 px-6 py-3 rounded-lg">
+                                                <h2 class="text-base text-gray-900  title-font">Prose</h2>
+                                            </div>
+                                        </div>
+                                        <div class="xl:w-2/3 md:w-2/3 mt-2">
+                                            <div
+                                                class="bg-indigo-700 border border-indigo-700 hover:border-white px-6 py-3 rounded-lg">
+                                                <h2 class="text-base text-white  title-font">Compositions</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                </section>
+                <footer class="text-gray-500 bg-gray-900 body-font min-h-0">
+                    <div class="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
+                        <a class="flex title-font font-medium items-center md:justify-start justify-center text-white">
+                            <img src="public/assets/logo.png" class="h-10"/>
+                        </a>
+                        <!--<p class="text-sm text-gray-600 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-800 sm:py-2 sm:mt-0 mt-4">© 2020 tailblocks —
+                        <a href="https://twitter.com/knyttneve" class="text-gray-500 ml-1" target="_blank" rel="noopener noreferrer">@knyttneve</a>
+                      </p>-->
+                        <span class="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
+                            <a class="text-gray-600">
+                                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    class="w-5 h-5" viewBox="0 0 24 24">
+                                    <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                                </svg>
+                            </a>
+                            <a class="ml-3 text-gray-600">
+                                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    class="w-5 h-5" viewBox="0 0 24 24">
+                                    <path
+                                        d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a class="ml-3 text-gray-600">
+                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                                    <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
+                                </svg>
+                            </a>
+                            <a class="ml-3 text-gray-600">
+                                <svg fill="currentColor" stroke="currentColor" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="0" class="w-5 h-5" viewBox="0 0 24 24">
+                                    <path stroke="none"
+                                        d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z">
+                                    </path>
+                                    <circle cx="4" cy="4" r="2" stroke="none"></circle>
+                                </svg>
+                            </a>
+                        </span>
+                    </div>
+                </footer>
+        </div>
+
+    </div>
+
+    </section>
+    </main>
+
+    </div>
+</body>
+
+</html>
