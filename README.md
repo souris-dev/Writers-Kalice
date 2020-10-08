@@ -1,5 +1,4 @@
-# Writer's Kalice Server
-(Writer's Kalice server-side code)
+# Writer's Kalice
 
 ## About
 Project Writer's Kalice is an aim to create a social media platform exclusively for sharing creative writing compositions, poems, etc. and get feedback on it.
