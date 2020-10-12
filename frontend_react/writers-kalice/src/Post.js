@@ -90,7 +90,7 @@ class Post extends React.Component {
                 </div>
                 <a className="inline-flex items-center">
                     <span className="flex-grow flex flex-col pl-4">
-                        <span className="title-font font-medium text-white">{this.props.anonymous ? '<anonymous>' : this.props.postedbyUsername}</span>
+                        <span className="title-font font-medium text-white">{this.props.viewReqType ? ('Author: ' + (this.props.anonymous ? 'anonymous' : this.props.postedbyUsername) + ', sent by ' + this.props.sentByUsername)  : (this.props.anonymous ? '<anonymous>' : this.props.postedbyUsername) }</span>
                     </span>
                 </a>
 

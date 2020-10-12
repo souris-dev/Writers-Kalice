@@ -11,7 +11,7 @@ function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />
 }
 
-class Feed extends React.Component {
+export default class ViewRequestsPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -153,7 +153,7 @@ class Feed extends React.Component {
                 <header className="bg-gray-800 shadow">
                     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         <h1 className="text-3xl font-bold leading-tight text-white">
-                            Feed
+                            View Requests
                 </h1>
                     </div>
                 </header>
@@ -171,7 +171,7 @@ class Feed extends React.Component {
                                     kickstarter craft beer pork chic."
                                         title="Roof party
                                     normcore before they sold out, cornhole vape"
-                                        nPosReactions='10K' nNegReactions='5K' nComments="3" anonymous={false} postedbyUsername='sachett' viewReqType={false} />
+                                        nPosReactions='10K' nNegReactions='5K' nComments="3" anonymous={false} postedbyUsername='sachett' viewReqType={true} sentByUsername='sachett' />
                                     {/* Post component */}
                                     <div className="p-12 md:w-1/2 flex flex-col items-start border-dashed">
                                         <h2 className="sm:text-3xl text-2xl title-font font-medium text-white mt-4 mb-4">Roof party
@@ -445,5 +445,3 @@ class Feed extends React.Component {
         );
     }
 }
-
-export default Feed;

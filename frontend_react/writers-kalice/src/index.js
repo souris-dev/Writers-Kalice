@@ -7,9 +7,12 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Landing from './App';
 import SignUpPage from './SignUpPage';
 import Feed from './Feed';
-import * as serviceWorker from './serviceWorker';
 import NewPostPage from './NewPost';
 import ProfileSettingsPage from './ProfileSettingsPage';
+import ViewRequestsPage from './ViewRequestsPage';
+import PostDisplayPage from './PostDisplayPage';
+
+import * as serviceWorker from './serviceWorker';
 
 const history = createBrowserHistory();
 
@@ -21,6 +24,8 @@ ReactDOM.render(
       <Route path="/feed" component={Feed} />
       <Route path="/write" component={NewPostPage} />
       <Route path="/profileSettings" component={ProfileSettingsPage} />
+      <Route path="/viewRequests" component={ViewRequestsPage} />
+      <Route path="/post" component={PostDisplayPage} />
     </Router>
   </React.StrictMode>,
   document.getElementById('root')

@@ -63,6 +63,8 @@ export default function PopupMenuList(props) {
         }
 
         setOpen(false);
+
+        hist.push('/viewRequests');
     };
 
     const handleLogout = (event) => {
@@ -71,6 +73,13 @@ export default function PopupMenuList(props) {
         }
 
         setOpen(false);
+
+        if (window.localStorage) {
+            localStorage.removeItem('wKusername');
+            localStorage.removeItem('wKpass');
+        }
+
+        hist.push('/');
     };
 
     function handleListKeyDown(event) {

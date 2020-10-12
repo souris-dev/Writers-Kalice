@@ -7,6 +7,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
 import { useHistory } from 'react-router-dom';
+import Feed from './ViewRequestsPage';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />
@@ -19,11 +20,13 @@ function Landing() {
   if (window.localStorage) {
     username = window.localStorage.getItem('wKusername');
     password = window.localStorage.getItem('wKpass');
-    halfkey = window.localStorage.getItem('wKhalfkey');
   }
 
   if (!username || !password) {
     return new SignInPage();
+  }
+  else {
+    return new Feed();
   }
 }
 
