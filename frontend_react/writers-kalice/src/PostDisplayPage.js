@@ -4,6 +4,8 @@ import PopupMenuList from './PopupMenuList';
 import Post from './Post';
 import logo from './public/assets/logo.png';
 
+import Comment from './Comment';
+
 export default class PostDisplayPage extends React.Component {
     constructor(props) {
         super(props);
@@ -12,13 +14,30 @@ export default class PostDisplayPage extends React.Component {
             thisUserComment: ' ',
             thisAnononymousComment: false,
             thisUserPositiveComment: true,
-            comments: [],
+            comments: [
+                // Sample data
+                {
+                    content: "Glossier echo park pug, church-key sartorial biodiesel vexillologist pop-up snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke vaporware kombucha lumbersexual pork belly polaroid hoodie portland craft beer.",
+                    postedbyUsername: "sachett",
+                    anonymous: false
+                },
+                {
+                    content: "Glossier echo park pug, church-key sartorial biodiesel vexillologist pop-up snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke vaporware kombucha lumbersexual pork belly polaroid hoodie portland craft beer.",
+                    postedbyUsername: "sachett",
+                    anonymous: true
+                },
+                {
+                    content: "Glossier echo park pug, church-key sartorial biodiesel vexillologist pop-up snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke vaporware kombucha lumbersexual pork belly polaroid hoodie portland craft beer.",
+                    postedbyUsername: "sachett",
+                    anonymous: false
+                }
+            ],
             post: {
-                authorName: '',
-                title: {},
-                authorBio: '',
-                postedDate: '',
-                content: ''
+                postedbyUsername: '(Loading...)',
+                title: '(Loading...)',
+                postedbyBio: '(Loading...)',
+                postedDate: '(Loading...)',
+                content: '(Loading...)'
             },
             liked: null,
         };
@@ -153,7 +172,7 @@ export default class PostDisplayPage extends React.Component {
                                         className="text-gray-600 mr-3 inline-flex items-center ml-auto leading-none text-sm pr-3 py-1 border-gray-800">
 
                                             {/* Like, dislike view request buttons*/}
-                                            <button>
+                                            <button onClick={() => console.log(this.props.location.query.postId)}>
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5">
                                                     </path>
@@ -194,8 +213,8 @@ Donec vulputate auctor leo lobortis congue. Sed elementum pharetra turpis. Nulla
                                     
                                     <div className="flex-1 flex flex-col justify-center md:justify-start rounded-lg pb-4">
                                         <p className="font-bold ml-4 text-2xl">Author</p>
-                                        <p className="font-semibold mt-4 ml-4 text-xl">Name/Username</p>
-                                        <p className="pt-2 ml-4">Bio: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel neque non libero suscipit suscipit eu eu urna.</p>
+                                                <p className="font-semibold mt-4 ml-4 text-xl">{this.state.post.postedbyUsername}</p>
+                                                <p className="pt-2 ml-4">{this.state.post.postedbyBio}</p>
                                         
                                     </div>
                                 </div>
@@ -229,28 +248,15 @@ Donec vulputate auctor leo lobortis congue. Sed elementum pharetra turpis. Nulla
 
                                         <section className="text-gray-500 bg-gray-900 body-font overflow-hidden">
                                             <div className="container px-5 py-24 mx-auto">
-                                              <div className="-my-8">
-                                                  {/* comment obj start */}
-                                                <div className="py-8 flex flex-wrap md:flex-no-wrap border-b-2 border-gray-800">
-                                                  <div className="md:flex-grow">
-                                                    <h2 className="text-lg font-medium text-white title-font mb-2"><span className="font-semibold">username</span> says:</h2>
-                                                    <p className="leading-relaxed text-gray-400">Glossier echo park pug, church-key sartorial biodiesel vexillologist pop-up snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke vaporware kombucha lumbersexual pork belly polaroid hoodie portland craft beer.</p>
-                                                  </div>
+                                                <div className="-my-8">
+                                                
+                                                    {this.state.comments.map((comment) => 
+                                                        <Comment content={comment.content}
+                                                            postedbyUsername={comment.postedbyUsername}
+                                                            anonymous={comment.anonymous} />
+                                                    )}
+
                                                 </div>
-                                                {/* end comment obj*/}
-                                                <div className="py-8 flex flex-wrap md:flex-no-wrap border-b-2 border-gray-800">
-                                                    <div className="md:flex-grow">
-                                                      <h2 className="text-lg font-medium text-white title-font mb-2"><span className="font-semibold">username</span> says:</h2>
-                                                      <p className="leading-relaxed text-gray-400">Glossier echo park pug, church-key sartorial biodiesel vexillologist pop-up snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke vaporware kombucha lumbersexual pork belly polaroid hoodie portland craft beer.</p>
-                                                    </div>
-                                                  </div>
-                                                  <div className="py-8 flex flex-wrap md:flex-no-wrap border-b-2 border-gray-800">
-                                                    <div className="md:flex-grow">
-                                                      <h2 className="text-lg font-medium text-white title-font mb-2"><span className="font-semibold">username</span> says:</h2>
-                                                      <p className="leading-relaxed text-gray-400">Glossier echo park pug, church-key sartorial biodiesel vexillologist pop-up snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke vaporware kombucha lumbersexual pork belly polaroid hoodie portland craft beer.</p>
-                                                    </div>
-                                                  </div>
-                                              </div>
                                             </div>
                                           </section>
                                     </div>
