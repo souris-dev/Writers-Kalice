@@ -11,6 +11,11 @@ public class UserDisplayProfile {
     private String name;
     private String username;
     private Integer rank;
+    private String rankDesc;
     private Float numStars;
     private String bio;
+
+    private boolean showName;
+    private boolean showBio;
+    private boolean showInterests;
 }

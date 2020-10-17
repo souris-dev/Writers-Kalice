@@ -9,13 +9,13 @@ LEFT JOIN users_table ut on p.postedby_uid = ut.user_id;
 CREATE OR REPLACE VIEW getpost_view_com_rcn_int AS
 SELECT interm_no_interests.post_id as post_id, content, title, anonymous,
        min_rank, expiry_date, posted_date,
-       above_eighteen, postedby_uid, postedby_username,
+       is_above_eighteen, postedby_uid, postedby_username,
        n_comments, n_pos_rcn, n_neg_rcn
 FROM (
         (
             SELECT p.post_id as post_id, p.content as content, p.title as title,
                p.anonymous as anonymous, min_rank, expiry_date, posted_date,
-               above_eighteen, postedby_uid,
+               is_above_eighteen, postedby_uid,
                COUNT(pcom.comment_id) as n_comments,
                SUM(
                     CASE rcn.pos_neg
@@ -57,8 +57,7 @@ LEFT JOIN comments c ON pc.comment_id = c.comment_id;
 -- /posts/getSavedPosts
 CREATE OR REPLACE VIEW get_saved_posts AS
 SELECT ut.user_id, gpv.post_id, content, title, anonymous,
-       min_rank, expiry_date, posted_date,
-       above_eighteen, postedby_uid, postedby_username,
+       min_rank, expiry_date, posted_date, postedby_uid, postedby_username,
        n_comments, n_pos_rcn, n_neg_rcn
 FROM users_table ut
 LEFT JOIN seen_posts sp ON ut.user_id = sp.user_id
@@ -89,13 +88,13 @@ FROM profiles p
 LEFT JOIN ranks r ON p.rank_id = r.rank_id;
 
 CREATE OR REPLACE VIEW user_privacy AS
-SELECT user_id, show_interests, show_name, show_bio
+SELECT user_id, show_interests, show_name, show_bio, username
 FROM users_table ut
 LEFT JOIN privacy_details pd on ut.privacy_det_id = pd.detail_id;
 
 CREATE OR REPLACE VIEW profile_display AS
 SELECT pi.user_id as user_id, name, about_me, rank_id, num_stars,
-       rank_desc, show_interests, show_name, show_bio
+       rank_desc, show_interests, show_name, show_bio, username
 FROM profile_info pi
 LEFT JOIN user_privacy up on pi.user_id = up.user_id;
 

@@ -53,13 +53,13 @@ INSERT INTO ranks VALUES (0, 'Starter', 0);
 
 -- INSERTS: Prefill test
 CREATE TABLE profiles (
-    user_id         INTEGER         UNIQUE NOT NULL,
-    name            VARCHAR	    NOT NULL,
-    about_me        VARCHAR         NULL,
-    is_adult        BOOLEAN         NOT NULL,
-    npos_reacts     INTEGER         NOT NULL DEFAULT 0,
-    profile_pic_url TEXT            NOT NULL DEFAULT '',
-    rank_id         INTEGER         NOT NULL DEFAULT 0,
+    user_id             INTEGER         UNIQUE NOT NULL,
+    name                VARCHAR	        NOT NULL,
+    about_me            VARCHAR         NULL,
+    is_above_eighteen   BOOLEAN         NOT NULL,
+    npos_reacts         INTEGER         NOT NULL DEFAULT 0,
+    profile_pic_url     TEXT            NOT NULL DEFAULT '',
+    rank_id             INTEGER         NOT NULL DEFAULT 0,
     CONSTRAINT profile_pk PRIMARY KEY (user_id, name),
     CONSTRAINT profile_rank_fk FOREIGN KEY (rank_id) REFERENCES ranks(rank_id)
 );
@@ -83,7 +83,7 @@ CREATE TABLE interest_tags (
 -- INSERTS: Prefill test
 CREATE TABLE profile_interests (
     user_id         INTEGER         NOT NULL,
-    name            VARCHAR	    NOT NULL,
+    name            VARCHAR	        NOT NULL,
     interest_id     INTEGER         NOT NULL,
     CONSTRAINT profile_interests_pk PRIMARY KEY (user_id, name, interest_id),
     CONSTRAINT interest_fk FOREIGN KEY (interest_id) REFERENCES interest_tags(interest_id)
@@ -91,18 +91,17 @@ CREATE TABLE profile_interests (
 
 -- INSERTS: Prefill test
 CREATE TABLE posts (
-    post_id         SERIAL          PRIMARY KEY,
-    title           TEXT            NOT NULL DEFAULT '',
-    content         TEXT            NOT NULL,
-    anonymous       BOOLEAN         NOT NULL,
-    min_rank        INTEGER         NOT NULL,
-    expiry_date     DATE            NULL,
-    posted_date     DATE            NOT NULL,
-    age_descriptor  INTEGER         NOT NULL,
-    postedby_uid    INTEGER         NOT NULL,
+    post_id             SERIAL          PRIMARY KEY,
+    title               TEXT            NOT NULL DEFAULT '',
+    content             TEXT            NOT NULL,
+    anonymous           BOOLEAN         NOT NULL,
+    min_rank            INTEGER         NOT NULL,
+    expiry_date         DATE            NULL,
+    posted_date         DATE            NOT NULL,
+    is_above_eighteen   BOOLEAN         NOT NULL,
+    postedby_uid        INTEGER         NOT NULL,
     CONSTRAINT postedby_fk FOREIGN KEY (postedby_uid) REFERENCES users_table(user_id),
     CONSTRAINT date_ck CHECK (posted_date > expiry_date),
-    CONSTRAINT age_ck CHECK (age_descriptor > 0),
     CONSTRAINT rank_ck CHECK (min_rank >= 0)    -- TODO: check upper limit too
 );
 
