@@ -1,4 +1,4 @@
-package com.writerskalice.server.models;
+package com.writerskalice.server.models.getmodels;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,22 +1,21 @@
-package com.writerskalice.server.models;
+package com.writerskalice.server.models.postmodels;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileSettings {
+public class UpdateProfileData {
     private String name;
+    private String username;
+    private String password;
     private String email;
-    private String bio;
-    private Integer rank;
-    private Float numStars;
+
     private boolean isAboveEighteen;
     private boolean showBio;
     private boolean showName;
-    private ArrayList<String> interestTags;
+
+    private Integer uid;
 }

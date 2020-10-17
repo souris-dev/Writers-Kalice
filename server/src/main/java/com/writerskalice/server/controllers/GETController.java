@@ -1,12 +1,8 @@
 package com.writerskalice.server.controllers;
 
-import com.writerskalice.server.models.*;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.writerskalice.server.models.getmodels.*;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +12,7 @@ import java.util.ArrayList;
 //import org.springframework.web.bind.annotation.Controller;
 
 @RestController
-public class MainRESTController {
+public class GETController {
 
     @GetMapping("/userhello")
     public String userHello(@RequestParam(name="name", required=false, defaultValue="World!") String name, Model model) {
@@ -152,17 +148,6 @@ public class MainRESTController {
         }
 
         return viewReqPosts;
-    }
-
-    @PostMapping("/users/checksignin")
-    public ResponseEntity<?> checkSignIn(@RequestParam(name="username") String username,
-                                      @RequestParam(name="password") String password) {
-        if (username.equals("sachett") && password.equals("lol")) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
     }
 
     @GetMapping("/users/getprofiledisplay")
