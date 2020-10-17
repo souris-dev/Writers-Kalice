@@ -1,8 +1,10 @@
 package com.writerskalice.server.controllers;
 
+import com.writerskalice.server.models.postmodels.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,5 +20,35 @@ public class POSTController {
         else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @PostMapping("/users/createuser")
+    public ResponseEntity<?> createUserAndProfile(@RequestBody CreateUserProfileData userProfileData) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/users/updateprofiledata")
+    public ResponseEntity<?> updateUserProfile(@RequestBody UpdateProfileData updateProfileData) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/users/sendviewrequest")
+    public ResponseEntity<?> sendViewRequest(@RequestBody SendViewRequestData sendViewRequestData) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/posts/commenton")
+    public ResponseEntity<?> commentOnPost(@RequestBody CreateCommentData commentData) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/posts/reacton")
+    public ResponseEntity<?> reactOnPost(@RequestBody ReactOnPostData reactionData) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/posts/createpost")
+    public ResponseEntity<?> createPost(@RequestBody CreatePostData postData) {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
