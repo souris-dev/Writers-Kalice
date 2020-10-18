@@ -153,7 +153,7 @@ public class GETController {
     @GetMapping("/users/getprofiledisplay")
     public UserDisplayProfile getUserProfileDisplay(@RequestParam(name="userId") int userId) {
         return new UserDisplayProfile("Souris Ash",
-                "sachett", 2, 2f, "A good boy");
+                "sachett", 2, "Rookie", 2f, "A good boy", true, true, true);
     }
 
     @GetMapping("/users/getprofilesettings")
@@ -161,7 +161,7 @@ public class GETController {
         ArrayList<String> tags = new ArrayList<>();
         tags.add("poetry");
         tags.add("parody");
-        return new UserProfileSettings("Souris Ash", "suorees113@gmail.com", "A good boy.", 2,
+        return new UserProfileSettings("Souris Ash", "suorees113@gmail.com", "A good boy.", 2, "Rookie",
                 2f, true, true, true, tags);
     }
 }
