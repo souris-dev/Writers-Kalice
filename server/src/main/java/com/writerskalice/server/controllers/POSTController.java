@@ -1,12 +1,11 @@
 package com.writerskalice.server.controllers;
 
+import com.writerskalice.server.models.deletemodels.SetSeenData;
+import com.writerskalice.server.models.deletemodels.ViewRequestSeenData;
 import com.writerskalice.server.models.postmodels.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class POSTController {
@@ -49,6 +48,16 @@ public class POSTController {
 
     @PostMapping("/posts/createpost")
     public ResponseEntity<?> createPost(@RequestBody CreatePostData postData) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/posts/setseen")
+    public ResponseEntity<?> setPostSeen(@RequestBody SetSeenData setSeenData) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/posts/deleteviewrequest")
+    public ResponseEntity<?> setViewReqSeen(@RequestBody ViewRequestSeenData vrSeenData) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

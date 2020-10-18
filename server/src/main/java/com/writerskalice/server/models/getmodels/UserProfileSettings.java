@@ -14,9 +14,11 @@ public class UserProfileSettings {
     private String email;
     private String bio;
     private Integer rank;
+    private String rankDesc;
     private Float numStars;
+
     private boolean isAboveEighteen;
     private boolean showBio;
-    private boolean showName;
+    private boolean showInterests;
     private ArrayList<String> interestTags;
 }

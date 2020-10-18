@@ -49,7 +49,7 @@ CREATE TABLE ranks (
     num_stars       FLOAT           NOT NULL
 );
 
-INSERT INTO ranks VALUES (0, 'Starter', 0);
+-- INSERT INTO ranks VALUES (0, 'Starter', 0);
 
 -- INSERTS: Prefill test
 CREATE TABLE profiles (
@@ -111,7 +111,7 @@ CREATE TABLE view_requests (
     to_user_id      INTEGER     NOT NULL,
     post_id         INTEGER     NOT NULL,
     sent_date_time  TIMESTAMP WITH TIME ZONE    NOT NULL,
-    CONSTRAINT view_requests_pk PRIMARY KEY (from_user_id, to_user_id, post_id),
+    CONSTRAINT view_requests_pk PRIMARY KEY (from_user_id, to_user_id, post_id, sent_date_time),
     CONSTRAINT from_uid_fk FOREIGN KEY (from_user_id) REFERENCES users_table(user_id),
     CONSTRAINT to_uid_fk FOREIGN KEY (to_user_id) REFERENCES users_table(user_id),
     CONSTRAINT post_fk FOREIGN KEY(post_id) REFERENCES posts(post_id)
