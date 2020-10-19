@@ -17,7 +17,7 @@ export default class ViewRequestsPage extends React.Component {
         this.state = {
             posts: [
                 // Sample data
-                {
+                { 
                     id: 101,
                     content: `Live-edge letterpress cliche, salvia fanny pack
                             humblebrag narwhal portland. VHS man braid palo santo hoodie brunch trust fund.
