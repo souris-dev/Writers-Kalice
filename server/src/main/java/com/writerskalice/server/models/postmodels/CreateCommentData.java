@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateCommentData {
     private String content;
-    private boolean isPositive;
-    private boolean isAnonymous;
+    private Boolean isPositive;
+    private Boolean isAnonymous;
 
     private Integer postedbyUid;
 }

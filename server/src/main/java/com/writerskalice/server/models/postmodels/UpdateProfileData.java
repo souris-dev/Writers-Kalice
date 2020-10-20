@@ -13,9 +13,9 @@ public class UpdateProfileData {
     private String password;
     private String email;
 
-    private boolean isAboveEighteen;
-    private boolean showBio;
-    private boolean showName;
+    private Boolean isAboveEighteen;
+    private Boolean showBio;
+    private Boolean showName;
 
     private Integer uid;
 }

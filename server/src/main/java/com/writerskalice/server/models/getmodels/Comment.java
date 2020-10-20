@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class Comment {
     private String content;
     private String postedbyUsername;
-    private boolean anonymous;
+    private Boolean anonymous;
 }

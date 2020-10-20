@@ -3,7 +3,7 @@ package com.writerskalice.server.models.getmodels;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +15,7 @@ public class Post {
     private Integer nPosReactions;
     private Integer nNegReactions;
     private Integer nComments;
-    private boolean anonymous;
+    private Boolean anonymous;
     private String postedbyUsername;
     private ArrayList<String> tags;
     private Date postedOn;

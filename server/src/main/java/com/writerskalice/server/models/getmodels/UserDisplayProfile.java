@@ -15,7 +15,7 @@ public class UserDisplayProfile {
     private Float numStars;
     private String bio;
 
-    private boolean showName;
-    private boolean showBio;
-    private boolean showInterests;
+    private Boolean showName;
+    private Boolean showBio;
+    private Boolean showInterests;
 }

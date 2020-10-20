@@ -12,9 +12,9 @@ import java.util.ArrayList;
 public class CreatePostData {
     private String title;
     private String content;
-    private boolean isAboveEighteen;
+    private Boolean isAboveEighteen;
     private ArrayList<String> tags;
 
     private Integer postedbyUid;
-    private boolean anonymous;
+    private Boolean anonymous;
 }

@@ -14,8 +14,8 @@ public class CreateUserProfileData {
     private String name;
     private String email;
     private String bio;
-    private boolean isAboveEighteen;
-    private boolean showName;
-    private boolean showBio;
+    private Boolean isAboveEighteen;
+    private Boolean showName;
+    private Boolean showBio;
     private ArrayList<String> tags;
 }

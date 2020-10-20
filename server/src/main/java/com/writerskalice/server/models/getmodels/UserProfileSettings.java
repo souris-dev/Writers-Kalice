@@ -17,8 +17,9 @@ public class UserProfileSettings {
     private String rankDesc;
     private Float numStars;
 
-    private boolean isAboveEighteen;
-    private boolean showBio;
-    private boolean showInterests;
+    private Boolean isAboveEighteen;
+    private Boolean showBio;
+    private Boolean showName;
+    private Boolean showInterests;
     private ArrayList<String> interestTags;
 }
