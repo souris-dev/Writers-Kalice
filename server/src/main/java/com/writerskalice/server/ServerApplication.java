@@ -11,7 +11,9 @@ import java.util.Arrays;
 @SpringBootApplication
 public class ServerApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ClassNotFoundException {
+		System.out.println("Hey!");
+		Class.forName("org.postgresql.Driver");
 		SpringApplication.run(ServerApplication.class, args);
 	}
 

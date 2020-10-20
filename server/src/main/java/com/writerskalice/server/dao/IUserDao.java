@@ -5,12 +5,14 @@ import com.writerskalice.server.models.getmodels.UserProfileSettings;
 import com.writerskalice.server.models.postmodels.CreateUserProfileData;
 import com.writerskalice.server.models.postmodels.UpdateProfileData;
 
+import java.util.Map;
+
 public interface IUserDao {
     UserDisplayProfile retrieveUserDisplay(Integer uid);
     UserProfileSettings retrieveUserProfileSettings(Integer uid);
 
-    Boolean createUserProfile(CreateUserProfileData data);
+    Map<String, Object> createUserProfile(CreateUserProfileData data);
     Boolean updateUserProfile(UpdateProfileData data);
 
-    Boolean checkUserCreds(String username, String password);
+    Map<String, Object> checkUserCreds(String username, String password);
 }

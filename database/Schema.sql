@@ -83,7 +83,7 @@ CREATE TABLE interest_tags (
 -- INSERTS: Prefill test
 CREATE TABLE profile_interests (
     user_id         INTEGER         NOT NULL,
-    name            VARCHAR	        NOT NULL,
+    name            VARCHAR	    NOT NULL,
     interest_id     INTEGER         NOT NULL,
     CONSTRAINT profile_interests_pk PRIMARY KEY (user_id, name, interest_id),
     CONSTRAINT interest_fk FOREIGN KEY (interest_id) REFERENCES interest_tags(interest_id)

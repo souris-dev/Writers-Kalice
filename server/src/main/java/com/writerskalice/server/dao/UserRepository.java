@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,17 +111,96 @@ public class UserRepository implements IUserDao {
     }
 
     @Override
-    public Boolean createUserProfile(CreateUserProfileData data) {
-        return null;
+    public Map<String, Object> createUserProfile(CreateUserProfileData data) {
+        Integer privacyId = jdbcTemplate.queryForObject("select detail_id from privacy_details " +
+                "where show_interests = ?, show_name = ?, show_bio = ?",
+                new Object[]{data.getShowInterestTags(), data.getShowName(), data.getShowBio()},
+                (rs, rn) -> rs.getInt(1));
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date date = new java.util.Date();
+
+        Boolean success;
+
+        success = jdbcTemplate.update("insert into users_table(username, join_date, security_qn, security_ans, privacy_det_id)" +
+                " values (?, ?, ?, ?, ?)",
+                data.getUsername(), dateFormat.format(date), '-', '-', privacyId) > 0;
+
+        Integer userId = jdbcTemplate.queryForObject("select user_id from users_table where username = ?",
+                new Object[]{data.getUsername()}, (rs, rn) -> rs.getInt(1));
+
+        success = (jdbcTemplate.update("insert into user_email_ids values (?, ?);",
+                userId, data.getEmail()) > 0) && success;
+
+        success = (jdbcTemplate.update("insert into profiles(user_id, name, about_me, is_above_eighteen) values (?, ?, ?, ?)",
+                    userId, data.getName(), data.getBio(), data.getIsAboveEighteen()) > 0) && success;
+
+        success = (jdbcTemplate.update("insert into auth_helper_userauths(user_id, passwd) values (?, ?)",
+                    userId, data.getPassword()) > 0) && success;
+
+        // Now for profile interests
+        for (Integer tagId : data.getTags()) {
+            success = (jdbcTemplate.update("insert into profile_interests values (?, ?, ?)", userId, data.getName(), tagId) > 0) && success;
+        }
+
+        Map<String, Object> results = new HashMap<>();
+        results.put("userId", userId);
+        results.put("success", success);
+
+        return results;
     }
 
     @Override
     public Boolean updateUserProfile(UpdateProfileData data) {
-        return null;
+        Integer privacyId = jdbcTemplate.queryForObject("select detail_id from privacy_details " +
+                        "where show_interests = ?, show_name = ?, show_bio = ?",
+                new Object[]{data.getShowInterestTags(), data.getShowName(), data.getShowBio()},
+                (rs, rn) -> rs.getInt(1));
+
+        Boolean success;
+
+        success = jdbcTemplate.update("update users_table set username = ? and privacy_det = ? " +
+                        " where user_id = ?;",
+                data.getUsername(), privacyId, data.getUid()) > 0;
+
+        success = (jdbcTemplate.update("update user_email_ids set email = ? where user_id = ?;",
+                data.getEmail(), data.getUid()) > 0) && success;
+
+        success = (jdbcTemplate.update("update profiles set name = ? and about_me = ? and is_above_eighteen = ? " +
+                        "where user_id = ? and name = ?",
+                data.getName(), data.getBio(), data.getIsAboveEighteen(), data.getUid(), data.getName()) > 0)
+                && success;
+
+        success = (jdbcTemplate.update("update auth_helper_userauth set passwd = ? where user_id = ?",
+                data.getPassword(), data.getUid()) > 0) && success;
+
+        // Now for profile interests
+        // First delete the existing tags, then re-insert
+        success = (jdbcTemplate.update("delete from profile_interests where user_id = ?", data.getUid()) > 0) && success;
+
+        for (Integer tagId : data.getTags()) {
+            success = (jdbcTemplate.update("insert into profile_interests values (?, ?, ?)", data.getUid(), data.getName(), tagId) > 0) && success;
+        }
+
+        return success;
     }
 
     @Override
-    public Boolean checkUserCreds(String username, String password) {
-        return null;
+    public Map<String, Object> checkUserCreds(String username, String password) {
+        String passdb = jdbcTemplate.queryForObject("select passwd from auth_helper_userauths where username = ?",
+                new Object[]{username},
+                (rs, rn) -> rs.getString(1));
+
+        assert passdb != null;
+
+        Boolean success = passdb.equals(password);
+        Integer userId = jdbcTemplate.queryForObject("select user_id from users_table where username = ?",
+                new Object[]{username}, (rs, rn) -> rs.getInt(1));
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("userId", userId);
+        res.put("success", success);
+
+        return res;
     }
 }

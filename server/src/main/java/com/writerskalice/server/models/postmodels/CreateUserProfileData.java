@@ -11,11 +11,13 @@ import java.util.ArrayList;
 @AllArgsConstructor
 public class CreateUserProfileData {
     private String username;
+    private String password;
     private String name;
     private String email;
     private String bio;
     private Boolean isAboveEighteen;
+    private Boolean showInterestTags;
     private Boolean showName;
     private Boolean showBio;
-    private ArrayList<String> tags;
+    private ArrayList<Integer> tags;
 }

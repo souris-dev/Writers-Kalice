@@ -13,7 +13,7 @@ public class CreatePostData {
     private String title;
     private String content;
     private Boolean isAboveEighteen;
-    private ArrayList<String> tags;
+    private ArrayList<Integer> tags;
 
     private Integer postedbyUid;
     private Boolean anonymous;

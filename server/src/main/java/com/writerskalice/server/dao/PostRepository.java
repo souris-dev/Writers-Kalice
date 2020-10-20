@@ -5,12 +5,17 @@ import com.writerskalice.server.models.getmodels.Post;
 import com.writerskalice.server.models.postmodels.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.sql.Date;
 import java.util.stream.Collectors;
 
@@ -143,26 +148,62 @@ public class PostRepository implements IPostDao {
 
     @Override
     public Boolean createNewPost(CreatePostData postData) {
-        return null;
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date date = new java.util.Date();
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        String statement = "insert into posts(title, content, anonymous, min_rank, posted_date, is_above_eighteen, postedby_uid)" +
+                " values (?, ?, ?, 0, ?, ?, ?)";
+
+        Boolean success = jdbcTemplate.update(
+                con -> {
+                    PreparedStatement ps = con.prepareStatement(statement, new String[] {"post_id"});
+                    ps.setString(1, postData.getTitle());
+                    ps.setString(2, postData.getContent());
+                    ps.setBoolean(2, postData.getAnonymous());
+                    ps.setString(3, dateFormat.format(date));
+                    ps.setBoolean(4, postData.getIsAboveEighteen());
+                    ps.setInt(5, postData.getPostedbyUid());
+
+                    return ps;
+                }, keyHolder) > 0;
+
+        Integer postId = Objects.requireNonNull(keyHolder.getKey()).intValue();
+
+        for (Integer interestId : postData.getTags()) {
+            success = ((jdbcTemplate.update("insert into post_interests values (?, ?)",
+                    postId, interestId)) > 0) && success;
+        }
+
+        return success;
     }
 
     @Override
     public Boolean reactOnPost(ReactOnPostData reactionData) {
-        return null;
+        return jdbcTemplate.update("insert into post_reactions(user_id, post_id, reaction_id) " +
+                "values (?, ?, ?);" + reactionData.getReactedbyUid(), reactionData.getReactedonPid(),
+                reactionData.getReactionId()) > 0;
     }
 
     @Override
     public Boolean commentOnPost(CreateCommentData commentData) {
-        return null;
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        java.util.Date date = new java.util.Date();
+
+        return jdbcTemplate.update("insert into comments(content, posted_dt_tm, anonymous) values (?, ?, ?)",
+                    commentData.getContent(), dateFormat.format(date) + " +05:30", commentData.getIsAnonymous()) > 0;
     }
 
     @Override
     public Boolean setPostSeen(SetSeenData seenData) {
-        return null;
+        return jdbcTemplate.update("insert into seen_posts(user_id, post_id) values (?, ?);",
+                seenData.getUserId(), seenData.getPostId()) > 0;
     }
 
     @Override
     public Boolean addSavedPost(SavePostData savePostData) {
-        return null;
+        return jdbcTemplate.update("insert into saved_posts(user_id, post_id) values (?, ?);",
+                savePostData.getUserId(), savePostData.getUserId()) > 0;
     }
 }
