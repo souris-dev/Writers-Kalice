@@ -1,4 +1,4 @@
-package com.writerskalice.server.models.deletemodels;
+package com.writerskalice.server.models.postmodels;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SetSeenData {
+    private Integer userId;
     private Integer postId;
 }
