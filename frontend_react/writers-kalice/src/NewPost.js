@@ -3,11 +3,13 @@ import logo from './public/assets/logo.png';
 import './css/build/tailwind.css';
 import PopupMenuList from './PopupMenuList';
 import Chip from '@material-ui/core/Chip';
+import serverUrl from './appconfig';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import Post from './Post';
 import InterestChip from './InterestChip';
+import { tagToId } from './utils';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />
@@ -94,12 +96,34 @@ export default class NewPostPage extends React.Component {
         }
 
         // send post
-        this.setState({
-            successText: 'Posted!',
-            successSnkOpen: true,
-        });
 
-        window.setTimeout(() => this.props.history.push('/feed'), 1000);
+        fetch(serverUrl + "/posts/createpost", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title: this.state.title,
+                content: this.state.content,
+                isAboveEighteen: this.state.above_eighteen,
+                anonymous: this.state.anonymous,
+                postedbyUid: window.localStorage.getItem("wKuid"),
+                tags: this.state.interestTags.map((tag) => tagToId(tag)),
+            })
+        }).then((respone) => {
+            if (respone.ok) {
+                this.setState({
+                    successText: 'Posted!',
+                    successSnkOpen: true,
+                });
+        
+                window.setTimeout(() => this.props.history.push('/feed'), 1000);
+            }
+            else {
+                this.setState({
+                    errorText: 'Could not post!',
+                    failedSnkOpen: true,
+                });
+            }
+        });
     }
 
     render() {

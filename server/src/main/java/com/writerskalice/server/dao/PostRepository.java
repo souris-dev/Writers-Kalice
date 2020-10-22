@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,6 +28,9 @@ public class PostRepository implements IPostDao {
 
     @Override
     public Post retrievePost(Integer postId) {
+        System.out.println("select post_id, title, content, n_pos_rcn, n_neg_rcn, n_comments, anonymous, postedby_username, posted_date " +
+                "from getpost_view_com_rcn_int " +
+                "where post_id = " + postId.toString() + ";");
         Map<String, Object> res = jdbcTemplate.queryForObject(
                 "select post_id, title, content, n_pos_rcn, n_neg_rcn, n_comments, anonymous, postedby_username, posted_date " +
                         "from getpost_view_com_rcn_int " +
@@ -102,9 +106,7 @@ public class PostRepository implements IPostDao {
             postIdsSeenStr.append(i.toString()).append(", ");
         }
 
-        // Delete last two characters
-        postIdsSeenStr.deleteCharAt(postIdsSeenStr.length() - 1);
-        postIdsSeenStr.deleteCharAt(postIdsSeenStr.length() - 1);
+        System.out.println(postIdsSeenStr.length());
 
         // Now, get all the post Ids that do not have their post ids in postIdsSeen
         // ordered by their recency
@@ -112,11 +114,23 @@ public class PostRepository implements IPostDao {
         ArrayList<Integer> feedIds;
 
         // Check for above eighteen stuff
-        if (isAboveEighteen) {
+        if (isAboveEighteen && postIdsSeenStr.length() > 1) {
+            // Delete last two characters
+            postIdsSeenStr.deleteCharAt(postIdsSeenStr.length() - 1);
+            postIdsSeenStr.deleteCharAt(postIdsSeenStr.length() - 1);
+
              feedIds = jdbcTemplate.queryForList(
                     "select post_id from posts where post_id not in (?)" +
                             " order by posted_date desc;",
                     postIdsSeenStr).stream().map((mapObj) -> (Integer) mapObj.get("post_id"))
+                    .collect(Collectors.toCollection(ArrayList::new));
+        }
+        if (isAboveEighteen && postIdsSeenStr.length() < 1) {
+
+            feedIds = jdbcTemplate.queryForList(
+                    "select post_id from posts" +
+                            " order by posted_date desc;")
+                    .stream().map((mapObj) -> (Integer) mapObj.get("post_id"))
                     .collect(Collectors.toCollection(ArrayList::new));
         }
         else {
@@ -147,6 +161,7 @@ public class PostRepository implements IPostDao {
     }
 
     @Override
+    @Transactional
     public Boolean createNewPost(CreatePostData postData) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         java.util.Date date = new java.util.Date();
@@ -161,10 +176,10 @@ public class PostRepository implements IPostDao {
                     PreparedStatement ps = con.prepareStatement(statement, new String[] {"post_id"});
                     ps.setString(1, postData.getTitle());
                     ps.setString(2, postData.getContent());
-                    ps.setBoolean(2, postData.getAnonymous());
-                    ps.setString(3, dateFormat.format(date));
-                    ps.setBoolean(4, postData.getIsAboveEighteen());
-                    ps.setInt(5, postData.getPostedbyUid());
+                    ps.setBoolean(3, postData.getAnonymous());
+                    ps.setDate(4, java.sql.Date.valueOf(dateFormat.format(date)));
+                    ps.setBoolean(5, postData.getIsAboveEighteen());
+                    ps.setInt(6, postData.getPostedbyUid());
 
                     return ps;
                 }, keyHolder) > 0;

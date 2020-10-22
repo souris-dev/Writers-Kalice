@@ -7,6 +7,7 @@ import com.writerskalice.server.models.postmodels.UpdateProfileData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,10 +21,13 @@ public class UserRepository implements IUserDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public UserDisplayProfile retrieveUserDisplay(Integer uid) {
+    public UserDisplayProfile retrieveUserDisplay(String username) {
+        Integer userId = jdbcTemplate.queryForObject("select user_id from users_table where username = ?",
+                new Object[]{username}, (rs, rn) -> rs.getInt(1));
+
         Map<String, Object> res =
                 jdbcTemplate.queryForObject("select name, username, rank_id, rank_desc, num_stars, about_me as bio, show_name, show_bio, show_interests " +
-                                "from profile_display " + "where user_id = ?;", new Object[]{uid},
+                                "from profile_display " + "where user_id = ?;", new Object[]{userId},
                 (rs, rowNum) -> {
                     Map<String, Object> resultMap = new HashMap<>();
                     resultMap.put("name", rs.getString(1));
@@ -111,26 +115,31 @@ public class UserRepository implements IUserDao {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> createUserProfile(CreateUserProfileData data) {
-        Integer privacyId = jdbcTemplate.queryForObject("select detail_id from privacy_details " +
-                "where show_interests = ?, show_name = ?, show_bio = ?",
+        /*Integer privacyId = jdbcTemplate.queryForObject("select detail_id from privacy_details " +
+                "where show_interests = ? and show_name = ? and show_bio = ?",
                 new Object[]{data.getShowInterestTags(), data.getShowName(), data.getShowBio()},
-                (rs, rn) -> rs.getInt(1));
+                (rs, rn) -> rs.getInt(1));*/
+
+        Integer privacyId = 1;
+        System.out.println(privacyId);
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         java.util.Date date = new java.util.Date();
 
-        Boolean success;
+        Boolean success = true;
 
-        success = jdbcTemplate.update("insert into users_table(username, join_date, security_qn, security_ans, privacy_det_id)" +
+        System.out.println("Recs inserted: ");
+        System.out.println(jdbcTemplate.update("insert into users_table(username, join_date, security_qn, security_ans, privacy_det_id)" +
                 " values (?, ?, ?, ?, ?)",
-                data.getUsername(), dateFormat.format(date), '-', '-', privacyId) > 0;
+                data.getUsername(), date, '-', '-', privacyId));
 
         Integer userId = jdbcTemplate.queryForObject("select user_id from users_table where username = ?",
                 new Object[]{data.getUsername()}, (rs, rn) -> rs.getInt(1));
 
-        success = (jdbcTemplate.update("insert into user_email_ids values (?, ?);",
-                userId, data.getEmail()) > 0) && success;
+        System.out.println(jdbcTemplate.update("insert into user_email_ids values (?, ?);",
+                userId, data.getEmail()));
 
         success = (jdbcTemplate.update("insert into profiles(user_id, name, about_me, is_above_eighteen) values (?, ?, ?, ?)",
                     userId, data.getName(), data.getBio(), data.getIsAboveEighteen()) > 0) && success;
@@ -187,15 +196,16 @@ public class UserRepository implements IUserDao {
 
     @Override
     public Map<String, Object> checkUserCreds(String username, String password) {
-        String passdb = jdbcTemplate.queryForObject("select passwd from auth_helper_userauths where username = ?",
-                new Object[]{username},
+        Integer userId = jdbcTemplate.queryForObject("select user_id from users_table where username = ?",
+                new Object[]{username}, (rs, rn) -> rs.getInt(1));
+
+        String passdb = jdbcTemplate.queryForObject("select passwd from auth_helper_userauths where user_id = ?",
+                new Object[]{userId},
                 (rs, rn) -> rs.getString(1));
 
         assert passdb != null;
 
         Boolean success = passdb.equals(password);
-        Integer userId = jdbcTemplate.queryForObject("select user_id from users_table where username = ?",
-                new Object[]{username}, (rs, rn) -> rs.getInt(1));
 
         Map<String, Object> res = new HashMap<>();
         res.put("userId", userId);

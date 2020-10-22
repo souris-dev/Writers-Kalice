@@ -1,11 +1,13 @@
 import React from 'react';
 import logo from './public/assets/logo.png';
 import './css/build/tailwind.css';
+import serverUrl from './appconfig';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
 import { useHistory } from 'react-router-dom';
+import { tagToId } from './utils';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />
@@ -85,6 +87,61 @@ class SignUpPage extends React.Component {
 
     handleSubmit() {
         console.log(this.state);
+
+        fetch(serverUrl + "/users/createuser", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: this.state.username,
+                password: this.state.password,
+                name: this.state.name,
+                email: this.state.email,
+                bio: this.state.bio,
+                isAboveEighteen: this.state.isAboveEighteen,
+                showInterestTags: false,
+                showName: this.showName,
+                showBio: this.showBio,
+                tags: this.state.interestTags.map((tag) => tagToId(tag)),
+            })
+        }).then(response => {
+            if (response.status == 200) {
+              window.localStorage.setItem('wKusername', this.state.username);
+              window.localStorage.setItem('wKpassword', this.state.password);
+    
+              response.json().then((data) => {
+                console.log(data)
+    
+                if (data.success) {
+                  window.localStorage.setItem('wKuid', data.userId);
+                  this.setState({
+                    successText: 'Signed up successfully!',
+                    successSnkOpen: true,
+                  });
+    
+                  window.setTimeout(() => this.props.history.push('/feed'), 1000);
+                }
+                else {
+                  this.setState({
+                    errorText: 'Could not sign up!',
+                    failedSnkOpen: true,
+                  });
+                }
+              });
+            }
+            else {
+              this.setState({
+                errorText: 'Sign up failed!',
+                failedSnkOpen: true,
+              });
+            }
+        });
+        
+        /*this.setState({
+            successText: 'Signed up successfully!',
+            successSnkOpen: true,
+          });
+
+          window.setTimeout(() => this.props.history.push('/feed'), 1000);*/
     }
 
     addTag(interest) {

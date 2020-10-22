@@ -8,7 +8,7 @@ import com.writerskalice.server.models.postmodels.UpdateProfileData;
 import java.util.Map;
 
 public interface IUserDao {
-    UserDisplayProfile retrieveUserDisplay(Integer uid);
+    UserDisplayProfile retrieveUserDisplay(String username);
     UserProfileSettings retrieveUserProfileSettings(Integer uid);
 
     Map<String, Object> createUserProfile(CreateUserProfileData data);

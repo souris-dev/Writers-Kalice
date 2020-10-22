@@ -2,6 +2,7 @@ import React from 'react';
 import logo from './public/assets/logo.png';
 import './css/build/tailwind.css';
 import PopupMenuList from './PopupMenuList';
+import serverUrl from './appconfig';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
@@ -26,8 +27,8 @@ class Feed extends React.Component {
                             kickstarter craft beer pork chic.`,
                     
                     title: "Roof party normcore before they sold out, cornhole vape",
-                    nPosReactions: 10000,
-                    nNegReactions: 5000,
+                    nposReactions: 10000,
+                    nnegReactions: 5000,
                     nComments: 3,
                     anonymous: false,
                     postedbyUsername: 'sachett',
@@ -42,8 +43,8 @@ class Feed extends React.Component {
                             kickstarter craft beer pork chic.`,
                     
                     title: "Roof party normcore before they sold out, cornhole vape",
-                    nPosReactions: 10000,
-                    nNegReactions: 5000,
+                    nposReactions: 10000,
+                    nnegReactions: 5000,
                     nComments: 3,
                     anonymous: false,
                     postedbyUsername: 'sachett',
@@ -58,8 +59,8 @@ class Feed extends React.Component {
                             kickstarter craft beer pork chic.`,
                     
                     title: "Roof party normcore before they sold out, cornhole vape",
-                    nPosReactions: 10000,
-                    nNegReactions: 5000,
+                    nposReactions: 10000,
+                    nnegReactions: 5000,
                     nComments: 3,
                     anonymous: false,
                     postedbyUsername: 'sachett',
@@ -72,6 +73,17 @@ class Feed extends React.Component {
         this.handleProfileSettings = this.handleProfileSettings.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
         this.handleVR = this.handleVR.bind(this);
+    }
+
+    componentDidMount() {
+        fetch(serverUrl + "/posts/getfeed?userId=" + window.localStorage.getItem("wKuid"), { method: 'GET' })
+            .then((respone) => respone.json())
+            .then((data) => {
+                console.log(data);
+                this.setState({
+                    posts: data
+                });
+            });
     }
 
     handleWrite() {
@@ -220,8 +232,8 @@ class Feed extends React.Component {
                                         <Post content={post.content} title={post.title}
                                             key={post.id}
                                             id={post.id}
-                                            nPosReactions={post.nPosReactions.toString()}
-                                            nNegReactions={post.nNegReactions.toString()}
+                                            nPosReactions={post.nposReactions.toString()}
+                                            nNegReactions={post.nnegReactions.toString()}
                                             nComments={post.nComments.toString()} anonymous={post.anonymous}
                                             postedbyUsername={post.postedbyUsername} viewReqType={false}
                                             tags={post.tags}

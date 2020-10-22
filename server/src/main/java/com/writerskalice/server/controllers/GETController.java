@@ -6,6 +6,7 @@ import com.writerskalice.server.models.getmodels.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 //import org.springframework.web.bind.annotation.Controller;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class GETController {
 
     @Autowired
@@ -32,6 +34,7 @@ public class GETController {
     }
 
     @GetMapping("/posts/getpost")
+    @CrossOrigin(origins = "http://localhost:3000")
     public Post getPost(@RequestParam(name="postId") int postId) {
         /*Post post = new Post();
         post.setId(postId);
@@ -66,6 +69,7 @@ public class GETController {
     }
     
     @GetMapping("/posts/getcomments")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ArrayList<Comment> getComments(@RequestParam(name="postId") int postId) {
         /*ArrayList<Comment> comments = new ArrayList<>();
         comments.add(new Comment("Comment 1", "sachett", false));
@@ -78,14 +82,15 @@ public class GETController {
         }
         catch (EmptyResultDataAccessException ex) {
             ex.printStackTrace();
-            return null;
+            return new ArrayList<Comment>();
         }
         catch (Exception ex) {
-            return null;
+            return new ArrayList<Comment>();
         }
     }
 
     @GetMapping("/posts/getfeed")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ArrayList<Post> getFeed(@RequestParam(name="userId") int userId) {
         /*ArrayList<Post> feedPosts = new ArrayList<>();
 
@@ -117,17 +122,14 @@ public class GETController {
 
         try {
             return postRepository.retrieveFeed(userId);
-        }
-        catch (EmptyResultDataAccessException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            return null;
-        }
-        catch (Exception ex) {
-            return null;
+            return new ArrayList<Post>();
         }
     }
 
     @GetMapping("/posts/getsavedposts")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ArrayList<Post> getSavedPosts(@RequestParam(name="userId") int userId) {
         /*ArrayList<Post> savedPosts = new ArrayList<>();
 
@@ -170,6 +172,7 @@ public class GETController {
     }
 
     @GetMapping("/users/getviewrequests")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ArrayList<ViewRequestPost> getViewRequests(@RequestParam(name="userId") int userId) {
         ArrayList<ViewRequestPost> viewReqPosts = new ArrayList<>();
 
@@ -202,12 +205,13 @@ public class GETController {
     }
 
     @GetMapping("/users/getprofiledisplay")
-    public UserDisplayProfile getUserProfileDisplay(@RequestParam(name="userId") int userId) {
+    @CrossOrigin(origins = "http://localhost:3000")
+    public UserDisplayProfile getUserProfileDisplay(@RequestParam(name="username") String username) {
         /*return new UserDisplayProfile("Souris Ash",
                 "sachett", 2, "Rookie", 2f, "A good boy", true, true, true);*/
 
         try {
-            return userRepository.retrieveUserDisplay(userId);
+            return userRepository.retrieveUserDisplay(username);
         }
         catch (EmptyResultDataAccessException ex) {
             ex.printStackTrace();
@@ -219,6 +223,7 @@ public class GETController {
     }
 
     @GetMapping("/users/getprofilesettings")
+    @CrossOrigin(origins = "http://localhost:3000")
     public UserProfileSettings getUserProfileSettings(@RequestParam(name="userId") int userId) {
         /*ArrayList<String> tags = new ArrayList<>();
         tags.add("poetry");

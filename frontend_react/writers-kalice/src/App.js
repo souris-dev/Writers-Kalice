@@ -1,4 +1,5 @@
 import React from 'react';
+import serverUrl from './appconfig';
 import { Link, Redirect } from 'react-router-dom';
 import logo from './public/assets/logo.png';
 //import './App.css';
@@ -58,35 +59,57 @@ class SignInPage extends React.Component {
     }
 
     if (window.localStorage) {
-      // check with the server
+      
+      console.log(JSON.stringify({ username: this.state.username, password: this.state.password }));
 
-      // if success
-      if (true) {
-        window.localStorage.setItem('wKusername', this.state.username);
-        window.localStorage.setItem('wKpassword', this.state.password);
+      fetch(serverUrl + "/users/checksignin", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: this.state.password, username: this.state.username })
+      }).then(response => {
+        if (response.status == 200) {
+          window.localStorage.setItem('wKusername', this.state.username);
+          window.localStorage.setItem('wKpassword', this.state.password);
 
-        this.setState({
-          successText: 'Signed in successfully!',
-          successSnkOpen: true,
-        });
+          response.json().then((data) => {
+            console.log(data)
 
-        window.setTimeout(() => this.props.history.push('/feed'), 1000);
-      }
-      // if failed
-      else {
-        this.setState({
-          errorText: 'Sign in failed!',
-          failedSnkOpen: true,
-        });
-      }
-    }
-    else {
-      this.setState({
-        errorText: 'Sign in failed!',
-        failedSnkOpen: true,
+            if (data.success) {
+              window.localStorage.setItem('wKuid', data.userId);
+              this.setState({
+                successText: 'Signed in successfully!',
+                successSnkOpen: true,
+              });
+
+              window.setTimeout(() => this.props.history.push('/feed'), 1000);
+            }
+            else {
+              this.setState({
+                errorText: 'Invalid username/password!',
+                failedSnkOpen: true,
+              });
+            }
+          });
+        }
+        else if (response.status == 401) {
+          this.setState({
+            errorText: 'Invalid username/password!',
+            failedSnkOpen: true,
+          });
+        }
+      }).catch(() => {
+
       });
     }
-  }
+
+      //window.localStorage.setItem('wKuid', data.userId);
+      /*this.setState({
+        successText: 'Signed in successfully!',
+        successSnkOpen: true,
+      });
+
+      window.setTimeout(() => this.props.history.push('/feed'), 1000);*/
+    }
 
   handleChange(event) {
     const target = event.target;
@@ -99,7 +122,7 @@ class SignInPage extends React.Component {
   }
 
   render() {
-      return (
+    return (
       <div className="flex flex-col h-screen bg-gray-900">
         <nav className="bg-gray-800">
           <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">

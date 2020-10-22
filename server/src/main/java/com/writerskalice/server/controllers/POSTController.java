@@ -20,10 +20,10 @@ public class POSTController {
     UserRepository userRepository;
 
     @PostMapping("/users/checksignin")
-    public ResponseEntity<?> checkSignIn(@RequestParam(name="username") String username,
-                                         @RequestParam(name="password") String password) {
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<?> checkSignIn(@RequestBody SignInDetails details) {
         try {
-            var res = userRepository.checkUserCreds(username, password);
+            var res = userRepository.checkUserCreds(details.getUsername(), details.getPassword());
             if (!((Boolean)res.get("success")))
                 throw new Exception();
             else
@@ -36,6 +36,7 @@ public class POSTController {
     }
 
     @PostMapping("/users/createuser")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> createUserAndProfile(@RequestBody CreateUserProfileData userProfileData) {
         try {
             var res = userRepository.createUserProfile(userProfileData);
@@ -51,6 +52,7 @@ public class POSTController {
     }
 
     @PostMapping("/users/updateprofiledata")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> updateUserProfile(@RequestBody UpdateProfileData updateProfileData) {
         try {
             var res = userRepository.updateUserProfile(updateProfileData);
@@ -66,11 +68,13 @@ public class POSTController {
     }
 
     @PostMapping("/users/sendviewrequest")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> sendViewRequest(@RequestBody SendViewRequestData sendViewRequestData) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/posts/commenton")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> commentOnPost(@RequestBody CreateCommentData commentData) {
         try {
             var res = postRepository.commentOnPost(commentData);
@@ -86,6 +90,7 @@ public class POSTController {
     }
 
     @PostMapping("/posts/reacton")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> reactOnPost(@RequestBody ReactOnPostData reactionData) {
         try {
             var res = postRepository.reactOnPost(reactionData);
@@ -101,6 +106,7 @@ public class POSTController {
     }
 
     @PostMapping("/posts/createpost")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> createPost(@RequestBody CreatePostData postData) {
         try {
             var res = postRepository.createNewPost(postData);
@@ -116,6 +122,7 @@ public class POSTController {
     }
 
     @DeleteMapping("/posts/setseen")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> setPostSeen(@RequestBody SetSeenData setSeenData) {
         try {
             var res = postRepository.setPostSeen(setSeenData);
@@ -131,6 +138,7 @@ public class POSTController {
     }
 
     @PostMapping("/posts/savepost")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> setPostSaved(@RequestBody SavePostData savePostData) {
         try {
             var res = postRepository.addSavedPost(savePostData);
@@ -146,6 +154,7 @@ public class POSTController {
     }
 
     @DeleteMapping("/posts/deleteviewrequest")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> setViewReqSeen(@RequestBody ViewRequestSeenData vrSeenData) {
         return new ResponseEntity<>(HttpStatus.OK);
     }

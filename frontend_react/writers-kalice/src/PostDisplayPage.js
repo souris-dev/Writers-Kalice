@@ -1,4 +1,5 @@
 import React from 'react';
+import serverUrl from './appconfig';
 import './css/build/tailwind.css';
 import PopupMenuList from './PopupMenuList';
 import Post from './Post';
@@ -37,11 +38,52 @@ export default class PostDisplayPage extends React.Component {
                 title: '(Loading...)',
                 postedbyBio: '(Loading...)',
                 postedDate: '(Loading...)',
-                content: '(Loading...)'
+                content: '(Loading...)',
+                anonymousPost: false,
             },
             liked: null,
         };
     }
+
+    /*componentDidMount() {
+        fetch(serverUrl + '/posts/getpost?' + (new URLSearchParams({
+            postId: this.props.location.query.postId
+        })), { method: 'GET' })
+            .then((response => response.json()))
+            .then((data) => {
+                this.setState({
+                    post: {
+                        postedbyUsername: data.postedbyUsername,
+                        content: data.content,
+                        title: data.title,
+                        postedDate: data.postedOn,
+                        anonymousPost: data.anonymous
+                    }
+                })
+
+                // now get the author profile
+                fetch(serverUrl + '/users/getprofiledisplay?' + (new URLSearchParams({
+                    username: this.state.post.postedbyUsername
+                }))).then((response) => response.json())
+                    .then((data) => {
+                        this.setState({
+                            post: {
+                                postedbyBio: data.showBio ? data.bio : '(Not permitted to be shown)'
+                            }
+                        })
+
+                        // finally, get the comments too
+                        fetch(serverUrl + '/posts/getcomments?' + (new URLSearchParams({
+                            postId: this.props.location.query.postId
+                        }))).then((response) => response.json())
+                            .then((data) => {
+                                this.setState({
+                                    comments: data
+                                })
+                            });
+                    });
+            });
+    }*/
 
     render() {
         return (
@@ -166,8 +208,8 @@ export default class PostDisplayPage extends React.Component {
                                 <div className="container px-5 mb-5 mx-auto flex sm:flex-no-wrap flex-wrap">
 
                                     <div className=" bg-white flex flex-col md:ml-auto w-full">
-                                        <p className="text-4xl mb-1 mt-6">Lorem ipsum dolor sit amet</p>
-                                        <p className="font-thin text-xl mt-2 leading-5">By <span className="font-normal">sachett</span> on 02-02-02 <span className="ml-6"></span>
+                                        <p className="text-4xl mb-1 mt-6">{this.state.post.title}</p>
+                                                <p className="font-thin text-xl mt-2 leading-5">By <span className="font-normal">{this.state.post.postedbyUsername}</span> on {this.state.post.postedDate.toString()} <span className="ml-6"></span>
                                         <span
                                         className="text-gray-600 mr-3 inline-flex items-center ml-auto leading-none text-sm pr-3 py-1 border-gray-800">
 
@@ -193,19 +235,7 @@ export default class PostDisplayPage extends React.Component {
                                             </button>
                                         </span></p>
                                         <div className="mt-4 leading-7">
-                                        <p className="text-xl font-semibold mt-6 leading-5">Introduction</p>
-<p className="text-lg font-normal mt-4">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel neque non libero suscipit suscipit eu eu urna. Proin bibendum urna mattis ante malesuada ultrices. Etiam in turpis vitae elit dictum aliquet. Donec mattis risus in turpis dapibus, eget tempus sem tincidunt. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In est enim, imperdiet sed ornare quis, pellentesque vel risus. Nunc vitae vestibulum turpis. Quisque eget eleifend urna. Etiam et vulputate purus, ut egestas sem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis quis neque non urna venenatis mollis et at massa. Pellentesque sem lacus, malesuada vel hendrerit molestie, mollis vel elit.
-<p className="text-xl font-semibold mt-6 mb-4 leading-5">Heading</p>
-
-Vivamus nec facilisis elit, quis congue justo. In non augue ex. Aenean pretium facilisis hendrerit. Sed sed imperdiet dui. Etiam faucibus a diam sed vehicula. Nullam commodo lacus tincidunt, tincidunt orci sed, dapibus leo. Vivamus vulputate quis risus a ultricies. Aliquam luctus id tellus non condimentum. Aenean maximus viverra ipsum eget vestibulum. Morbi ut tincidunt sem, efficitur volutpat tortor. Donec scelerisque, ipsum eu efficitur semper, neque turpis sodales quam, in aliquam elit lacus varius lorem. Ut ut diam id leo efficitur malesuada eget in velit. Pellentesque tristique orci nunc, vitae fermentum nibh luctus eu. Mauris condimentum justo sed ipsum egestas varius.
-
-Sed sagittis odio a volutpat feugiat. Cras aliquam varius justo, a rhoncus ante bibendum id. Nulla maximus nisl sed enim maximus, ut dictum lectus hendrerit. Fusce venenatis tincidunt eros. Phasellus quis augue vulputate ipsum pellentesque fringilla. Morbi nec tempor felis. Maecenas sollicitudin pellentesque dui, sit amet scelerisque mauris elementum nec. Cras ante metus, mattis in malesuada in, fermentum a nunc. Suspendisse potenti. Sed tempor lacus sed commodo dignissim. Quisque dictum, dolor auctor iaculis cursus, ipsum urna porttitor ex, sed consequat nisi tellus eget ante. Duis molestie mollis eros, eu sollicitudin mauris lobortis quis.
-
-Vivamus sed neque nec massa scelerisque imperdiet eget id sapien. Fusce elementum mi id malesuada luctus. Proin quis lorem id leo porta interdum non ac nisl. Integer nulla sem, ultrices sed neque eget, blandit condimentum metus. Aliquam eget malesuada sapien. Curabitur aliquet orci sit amet ex tincidunt convallis. Mauris urna mi, consequat mattis mollis a, dignissim eget sem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nam facilisis sem diam, viverra consequat metus consequat vel. Cras a mi eu ex luctus malesuada quis eu ante. Aliquam erat volutpat.
-Conclusion
-
-Donec vulputate auctor leo lobortis congue. Sed elementum pharetra turpis. Nulla at condimentum odio. Vestibulum ullamcorper enim eget porttitor bibendum. Proin eros nibh, maximus vitae nisi a, blandit ultricies lectus. Vivamus eu maximus lacus. Maecenas imperdiet iaculis neque, vitae efficitur felis vestibulum sagittis. Nunc a eros aliquet, egestas tortor hendrerit, posuere diam. Proin laoreet, ligula non eleifend bibendum, orci nulla luctus ipsum, dignissim convallis quam dolor et nulla.</p>
+                                                    <p className="text-lg font-normal mt-4">{this.state.post.content}</p>
                                     </div></div>
 
                                 </div>
