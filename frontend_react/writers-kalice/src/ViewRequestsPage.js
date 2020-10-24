@@ -2,6 +2,7 @@ import React from 'react';
 import logo from './public/assets/logo.png';
 import './css/build/tailwind.css';
 import PopupMenuList from './PopupMenuList';
+import { Link } from 'react-router-dom';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
@@ -15,60 +16,7 @@ export default class ViewRequestsPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            posts: [
-                // Sample data
-                { 
-                    id: 101,
-                    content: `Live-edge letterpress cliche, salvia fanny pack
-                            humblebrag narwhal portland. VHS man braid palo santo hoodie brunch trust fund.
-                            Bitters hashtag waistcoat fashion axe chia unicorn. Plaid fixie chambray 90's,
-                            slow-carb etsy tumeric. Cray pug you probably haven't heard of them hexagon
-                            kickstarter craft beer pork chic.`,
-                    
-                    title: "Roof party normcore before they sold out, cornhole vape",
-                    nPosReactions: 10000,
-                    nNegReactions: 5000,
-                    nComments: 3,
-                    anonymous: false,
-                    postedbyUsername: 'sachett',
-                    sentbyUsername: 'sachhett',
-                    tags: ['poetry', 'jokes']
-                },
-                {
-                    id: 102,
-                    content: `Live-edge letterpress cliche, salvia fanny pack
-                            humblebrag narwhal portland. VHS man braid palo santo hoodie brunch trust fund.
-                            Bitters hashtag waistcoat fashion axe chia unicorn. Plaid fixie chambray 90's,
-                            slow-carb etsy tumeric. Cray pug you probably haven't heard of them hexagon
-                            kickstarter craft beer pork chic.`,
-                    
-                    title: "Roof party normcore before they sold out, cornhole vape",
-                    nPosReactions: 10000,
-                    nNegReactions: 5000,
-                    nComments: 3,
-                    anonymous: false,
-                    postedbyUsername: 'sachett',
-                    sentbyUsername: 'alchette',
-                    tags: ['poetry', 'short_stories']
-                },
-                {
-                    id: 103,
-                    content: `Live-edge letterpress cliche, salvia fanny pack
-                            humblebrag narwhal portland. VHS man braid palo santo hoodie brunch trust fund.
-                            Bitters hashtag waistcoat fashion axe chia unicorn. Plaid fixie chambray 90's,
-                            slow-carb etsy tumeric. Cray pug you probably haven't heard of them hexagon
-                            kickstarter craft beer pork chic.`,
-                    
-                    title: "Roof party normcore before they sold out, cornhole vape",
-                    nPosReactions: 10000,
-                    nNegReactions: 5000,
-                    nComments: 3,
-                    anonymous: false,
-                    postedbyUsername: 'sachett',
-                    sentbyUsername: 'kalchette',
-                    tags: ['poetry', 'short_stories', 'nature']
-                }
-            ]
+            posts: []
         }
 
         this.handleWrite = this.handleWrite.bind(this);
@@ -107,11 +55,20 @@ export default class ViewRequestsPage extends React.Component {
                                 </div>
                                 <div className="hidden md:block">
                                     <div className="ml-10 flex items-baseline space-x-4">
+                                        <Link to="/feed">
                                         <a href="#"
-                                            className="px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Feed</a>
+                                                className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Feed</a>
+                                        </Link>
+                                        
+                                        <Link to="/savedPosts">
+                                        <a href="#"
+                                                className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Saved Posts</a>
+                                        </Link>
 
+                                        <Link to="/seenPosts">
                                         <a href="#"
-                                            className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Saved Posts</a>
+                                                className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Seen Posts</a>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
@@ -161,9 +118,10 @@ export default class ViewRequestsPage extends React.Component {
       */}
                     <div className='hidden'>
                         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                            <Link to="/feed">
                             <a href="#"
-                                className="block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Feed</a>
-
+                                    className="block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Feed</a>
+                                </Link>
                             <a href="#"
                                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Team</a>
 
@@ -219,17 +177,18 @@ export default class ViewRequestsPage extends React.Component {
                             <div className="container px-5 py-24 mx-auto">
                                 <div className="flex flex-wrap -m-12">
                                     
-                                    {this.state.posts.map((post) => 
-                                        <Post content={post.content} title={post.title}
+                                    {this.state.posts.map((post) => {
+                                        console.log(post);
+                                        return <Post content={post.content} title={post.title}
                                             key={post.id}
                                             id={post.id}
-                                            nPosReactions={post.nPosReactions.toString()}
-                                            nNegReactions={post.nNegReactions.toString()}
-                                            nComments={post.nComments.toString()} anonymous={post.anonymous}
-                                            postedbyUsername={post.postedbyUsername} viewReqType={true}
-                                            sentbyUsername={post.sentbyUsername}
+                                            nPosReactions={post.nposReactions.toString()}
+                                            nNegReactions={post.nnegReactions.toString()}
+                                            nComments={post.ncomments.toString()} anonymous={post.anonymous}
+                                            postedbyUsername={post.postedbyUsername} viewReqType={false}
                                             tags={post.tags}
                                         />
+                                        }
                                     )}
 
                                 </div>

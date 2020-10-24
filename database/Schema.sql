@@ -138,7 +138,7 @@ CREATE TABLE seen_posts (
 -- INSERTS: Prefill test opt
 CREATE TABLE reactions (
     reaction_id     SERIAL      PRIMARY KEY,
-    description     INTEGER     NOT NULL,
+    description     VARCHAR     NOT NULL,
     pos_neg         VARCHAR(9)  NOT NULL,
     CONSTRAINT pos_neg_ck CHECK (pos_neg in ('positive', 'negative'))
 );
@@ -149,7 +149,7 @@ CREATE TABLE post_reactions (
     post_id         INTEGER         NOT NULL,
     reaction_id     INTEGER         NOT NULL,
     anonymous       BOOLEAN         NOT NULL DEFAULT FALSE,
-    CONSTRAINT post_reactions_pk PRIMARY KEY (user_id, post_id, reaction_id),
+    CONSTRAINT post_reactions_pk PRIMARY KEY (user_id, post_id),
     CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES users_table(user_id),
     CONSTRAINT post_fk FOREIGN KEY(post_id) REFERENCES posts(post_id),
     CONSTRAINT reaction_id FOREIGN KEY (reaction_id) REFERENCES reactions(reaction_id)
@@ -159,7 +159,7 @@ CREATE TABLE post_reactions (
 CREATE TABLE comments (
     comment_id      SERIAL          PRIMARY KEY,
     content         TEXT            NOT NULL,
-    posted_dt_tm    TIMESTAMP WITH TIME ZONE NOT NULL,
+    posted_dt_tm    TIMESTAMPTZ     NOT NULL,
     anonymous       BOOLEAN         NOT NULL DEFAULT FALSE
 );
 

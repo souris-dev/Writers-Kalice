@@ -76,7 +76,8 @@ export default function PopupMenuList(props) {
 
         if (window.localStorage) {
             localStorage.removeItem('wKusername');
-            localStorage.removeItem('wKpass');
+            localStorage.removeItem('wKpassword');
+            localStorage.removeItem('wKuid');
         }
 
         hist.push('/');

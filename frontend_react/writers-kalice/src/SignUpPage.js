@@ -267,7 +267,7 @@ class SignUpPage extends React.Component {
                                                     className="bg-white rounded border border-gray-400 focus:outline-none focus:border-purple-500 text-base px-4 py-2 mb-4 tracking-widest font-mono"
                                                     placeholder="Password" type="password" name="password" onChange={this.handleOptions} />
                                                 <p className="font-semibold text-lg mb-2 mt-2">About Me</p>
-                                                <p className="font-thin mb-4">A short description about you.</p>
+                                                <p className="font-thin mb-4">A short description about yourself.</p>
                                                 <textarea
                                                     className="bg-white rounded border border-gray-400 focus:outline-none h-32 focus:border-purple-500 text-base px-4 py-2 mb-4 resize-none"
                                                     placeholder="Bio" name="bio" onChange={this.handleOptions}></textarea>

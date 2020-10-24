@@ -22,8 +22,11 @@ public class UserRepository implements IUserDao {
 
     @Override
     public UserDisplayProfile retrieveUserDisplay(String username) {
+        System.out.println("Hello hello!");
         Integer userId = jdbcTemplate.queryForObject("select user_id from users_table where username = ?",
                 new Object[]{username}, (rs, rn) -> rs.getInt(1));
+
+        System.out.println(userId);
 
         Map<String, Object> res =
                 jdbcTemplate.queryForObject("select name, username, rank_id, rank_desc, num_stars, about_me as bio, show_name, show_bio, show_interests " +
@@ -36,12 +39,14 @@ public class UserRepository implements IUserDao {
                     resultMap.put("rankDesc", rs.getString(4));
                     resultMap.put("numStars", rs.getFloat(5));
                     resultMap.put("bio", rs.getString(6));
-                    resultMap.put("showName", rs.getString(7));
+                    resultMap.put("showName", rs.getBoolean(7));
                     resultMap.put("showBio", rs.getBoolean(8));
                     resultMap.put("showInterests", rs.getBoolean(9));
 
                     return resultMap;
                 });
+
+        System.out.println(res);
 
         UserDisplayProfile profile = new UserDisplayProfile();
 
@@ -50,11 +55,18 @@ public class UserRepository implements IUserDao {
         profile.setBio((String) res.get("bio"));
         profile.setRank((Integer) res.get("rankId"));
         profile.setNumStars((Float) res.get("numStars"));
-        profile.setRankDesc((String) res.get("bio"));
+        profile.setRankDesc((String) res.get("rankDesc"));
         profile.setShowBio((Boolean) res.get("showBio"));
         profile.setShowName((Boolean) res.get("showName"));
         profile.setShowInterests((Boolean) res.get("showInterests"));
 
+        System.out.println("Hello hello!");
+
+        if (profile.getName() == null) {
+            System.out.println("null name");
+        }
+
+        System.out.println(profile.getName());
         return profile;
     }
 

@@ -13,6 +13,8 @@ import ViewRequestsPage from './ViewRequestsPage';
 import PostDisplayPage from './PostDisplayPage';
 
 import * as serviceWorker from './serviceWorker';
+import SavedPostsPage from './SavedPostsPage';
+import SeenPostsPage from './SeenPostsPage';
 
 const history = createBrowserHistory();
 
@@ -26,6 +28,8 @@ ReactDOM.render(
       <Route path="/profileSettings" component={ProfileSettingsPage} />
       <Route path="/viewRequests" component={ViewRequestsPage} />
       <Route path="/post" component={PostDisplayPage} />
+      <Route path="/savedPosts" component={SavedPostsPage} />
+      <Route path="/seenPosts" component={SeenPostsPage} />
     </Router>
   </React.StrictMode>,
   document.getElementById('root')

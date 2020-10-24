@@ -101,7 +101,10 @@ public class POSTController {
         }
         catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.NOT_MODIFIED);
+            if (e.getMessage().contains("post_reactions_pk"))
+                return new ResponseEntity<>("{\"reason\":\"only_once\"}", HttpStatus.ALREADY_REPORTED);
+            else
+                return new ResponseEntity<>(null, HttpStatus.NOT_MODIFIED);
         }
     }
 
@@ -149,7 +152,10 @@ public class POSTController {
         }
         catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.NOT_MODIFIED);
+            if (e.getMessage().contains("saved_posts_pk"))
+                return new ResponseEntity<>("{\"reason\":\"only_once\"}", HttpStatus.ALREADY_REPORTED);
+            else
+                return new ResponseEntity<>(null, HttpStatus.NOT_MODIFIED);
         }
     }
 

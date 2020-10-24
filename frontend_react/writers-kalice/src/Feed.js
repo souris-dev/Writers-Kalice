@@ -4,6 +4,8 @@ import './css/build/tailwind.css';
 import PopupMenuList from './PopupMenuList';
 import serverUrl from './appconfig';
 
+import { Link } from 'react-router-dom';
+
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import Post from './Post';
@@ -16,57 +18,7 @@ class Feed extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            posts: [
-                // Sample data
-                {
-                    id: 101,
-                    content: `Live-edge letterpress cliche, salvia fanny pack
-                            humblebrag narwhal portland. VHS man braid palo santo hoodie brunch trust fund.
-                            Bitters hashtag waistcoat fashion axe chia unicorn. Plaid fixie chambray 90's,
-                            slow-carb etsy tumeric. Cray pug you probably haven't heard of them hexagon
-                            kickstarter craft beer pork chic.`,
-                    
-                    title: "Roof party normcore before they sold out, cornhole vape",
-                    nposReactions: 10000,
-                    nnegReactions: 5000,
-                    nComments: 3,
-                    anonymous: false,
-                    postedbyUsername: 'sachett',
-                    tags: ['poetry', 'jokes']
-                },
-                {
-                    id: 102,
-                    content: `Live-edge letterpress cliche, salvia fanny pack
-                            humblebrag narwhal portland. VHS man braid palo santo hoodie brunch trust fund.
-                            Bitters hashtag waistcoat fashion axe chia unicorn. Plaid fixie chambray 90's,
-                            slow-carb etsy tumeric. Cray pug you probably haven't heard of them hexagon
-                            kickstarter craft beer pork chic.`,
-                    
-                    title: "Roof party normcore before they sold out, cornhole vape",
-                    nposReactions: 10000,
-                    nnegReactions: 5000,
-                    nComments: 3,
-                    anonymous: false,
-                    postedbyUsername: 'sachett',
-                    tags: ['poetry', 'short_stories']
-                },
-                {
-                    id: 103,
-                    content: `Live-edge letterpress cliche, salvia fanny pack
-                            humblebrag narwhal portland. VHS man braid palo santo hoodie brunch trust fund.
-                            Bitters hashtag waistcoat fashion axe chia unicorn. Plaid fixie chambray 90's,
-                            slow-carb etsy tumeric. Cray pug you probably haven't heard of them hexagon
-                            kickstarter craft beer pork chic.`,
-                    
-                    title: "Roof party normcore before they sold out, cornhole vape",
-                    nposReactions: 10000,
-                    nnegReactions: 5000,
-                    nComments: 3,
-                    anonymous: false,
-                    postedbyUsername: 'sachett',
-                    tags: ['poetry', 'short_stories', 'nature']
-                }
-            ]
+            posts: []
         }
 
         this.handleWrite = this.handleWrite.bind(this);
@@ -118,9 +70,16 @@ class Feed extends React.Component {
                                     <div className="ml-10 flex items-baseline space-x-4">
                                         <a href="#"
                                             className="px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Feed</a>
-
+                                        
+                                        <Link to="/savedPosts">
                                         <a href="#"
-                                            className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Saved Posts</a>
+                                                className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Saved Posts</a>
+                                            </Link>
+                                        
+                                        <Link to="/seenPosts">
+                                        <a href="#"
+                                                className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Seen Posts</a>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
@@ -228,16 +187,18 @@ class Feed extends React.Component {
                             <div className="container px-5 py-24 mx-auto">
                                 <div className="flex flex-wrap -m-12">
 
-                                    {this.state.posts.map((post) => 
-                                        <Post content={post.content} title={post.title}
+                                    {this.state.posts.map((post) => {
+                                        console.log(post);
+                                        return <Post content={post.content} title={post.title}
                                             key={post.id}
                                             id={post.id}
                                             nPosReactions={post.nposReactions.toString()}
                                             nNegReactions={post.nnegReactions.toString()}
-                                            nComments={post.nComments.toString()} anonymous={post.anonymous}
+                                            nComments={post.ncomments.toString()} anonymous={post.anonymous}
                                             postedbyUsername={post.postedbyUsername} viewReqType={false}
                                             tags={post.tags}
                                         />
+                                    }
                                     )}
 
                                 </div>

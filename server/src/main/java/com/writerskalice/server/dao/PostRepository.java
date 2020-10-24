@@ -31,7 +31,44 @@ public class PostRepository implements IPostDao {
         System.out.println("select post_id, title, content, n_pos_rcn, n_neg_rcn, n_comments, anonymous, postedby_username, posted_date " +
                 "from getpost_view_com_rcn_int " +
                 "where post_id = " + postId.toString() + ";");
-        Map<String, Object> res = jdbcTemplate.queryForObject(
+
+        Map<String, Object> res1 = jdbcTemplate.queryForObject("select post_id, title, content, anonymous, postedby_uid, posted_date " +
+                        "from posts " +
+                "where post_id = ?;", new Object[]{postId},
+                (rs, rn) -> {
+                    Map<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("postId", rs.getInt(1));
+                    resultMap.put("title", rs.getString(2));
+                    resultMap.put("content", rs.getString(3));
+                    resultMap.put("anonymous", rs.getBoolean(4));
+                    resultMap.put("postedbyUid", rs.getInt(5));
+                    resultMap.put("postedDate", rs.getDate(6));
+                    return resultMap;
+                });
+
+        assert res1 != null;
+        res1.put("postedbyUsername", jdbcTemplate.queryForObject("select username from users_table where user_id = ?;",
+                new Object[]{(Integer) res1.get("postedbyUid")},
+                (rs, rn) -> rs.getString(1)));
+
+        String reactionQuery = "select COALESCE(SUM(CASE rcn.pos_neg WHEN 'positive' THEN 1 ELSE 0 END), 0) AS n_pos_rcn, " +
+                "COALESCE(SUM (CASE rcn.pos_neg WHEN 'negative' THEN 1 ELSE 0 END), 0) AS n_neg_rcn " +
+                "from post_reactions prcn, reactions as rcn where prcn.reaction_id = rcn.reaction_id and prcn.post_id = ?;";
+
+        Map<String, Object> reactionsNComments = jdbcTemplate.queryForObject(reactionQuery, new Object[]{postId},
+                (rs, rn) -> {
+                    Map<String, Object> resMap = new HashMap<>();
+                    resMap.put("nPosReactions", rs.getInt(1));
+                    resMap.put("nNegReactions", rs.getInt(2));
+
+                    return resMap;
+                });
+
+        assert reactionsNComments != null;
+        reactionsNComments.put("nComments", jdbcTemplate.queryForObject("select coalesce(count(comment_id), 0) from post_comments " +
+                "where post_id = ?", new Object[]{postId}, (rs, rn) -> rs.getInt(1)));
+
+        /*Map<String, Object> res = jdbcTemplate.queryForObject(
                 "select post_id, title, content, n_pos_rcn, n_neg_rcn, n_comments, anonymous, postedby_username, posted_date " +
                         "from getpost_view_com_rcn_int " +
                         "where post_id = ?;", new Object[]{postId},
@@ -48,18 +85,18 @@ public class PostRepository implements IPostDao {
                     resultMap.put("postedDate", rs.getDate(9));
 
                     return resultMap;
-                });
+                });*/
 
         Post post = new Post();
         post.setId(postId);
-        post.setTitle((String) res.get("title"));
-        post.setContent((String) res.get("content"));
-        post.setAnonymous((Boolean) res.get("anonymous"));
-        post.setNPosReactions((Integer) res.get("nPosReactions"));
-        post.setNNegReactions((Integer) res.get("nNegReactions"));
-        post.setNComments((Integer) res.get("nComments"));
-        post.setPostedbyUsername((String) res.get("postedbyUsername"));
-        post.setPostedOn((Date) res.get("postedDate"));
+        post.setTitle((String) res1.get("title"));
+        post.setContent((String) res1.get("content"));
+        post.setAnonymous((Boolean) res1.get("anonymous"));
+        post.setNPosReactions((Integer) reactionsNComments.get("nPosReactions"));
+        post.setNNegReactions((Integer) reactionsNComments.get("nNegReactions"));
+        post.setNComments((Integer) reactionsNComments.get("nComments"));
+        post.setPostedbyUsername((String) res1.get("postedbyUsername"));
+        post.setPostedOn((Date) res1.get("postedDate"));
 
         List<Map<String, Object>> resInterests = jdbcTemplate.queryForList(
                 "select description as interest from posts_get_interest_tags where post_id = ?;", postId);
@@ -153,10 +190,10 @@ public class PostRepository implements IPostDao {
     public ArrayList<Comment> retrieveComments(Integer postId) {
 
         return jdbcTemplate.queryForList(
-                "select content, postedby_username, anonymous from get_comments where post_id = ?;",
+                "select content, postedby_username, anonymous from get_comments where post_id = ? order by posted_dt_tm desc;",
                 postId).stream().map((resmap) ->
                 new Comment((String) resmap.get("content"),
-                        (String) resmap.get("postedbyUsername"), (Boolean) resmap.get("anonymous")))
+                        (String) resmap.get("postedby_username"), (Boolean) resmap.get("anonymous")))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -197,7 +234,7 @@ public class PostRepository implements IPostDao {
     @Override
     public Boolean reactOnPost(ReactOnPostData reactionData) {
         return jdbcTemplate.update("insert into post_reactions(user_id, post_id, reaction_id) " +
-                "values (?, ?, ?);" + reactionData.getReactedbyUid(), reactionData.getReactedonPid(),
+                "values (?, ?, ?);", reactionData.getReactedbyUid(), reactionData.getReactedonPid(),
                 reactionData.getReactionId()) > 0;
     }
 
@@ -206,8 +243,30 @@ public class PostRepository implements IPostDao {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         java.util.Date date = new java.util.Date();
 
-        return jdbcTemplate.update("insert into comments(content, posted_dt_tm, anonymous) values (?, ?, ?)",
-                    commentData.getContent(), dateFormat.format(date) + " +05:30", commentData.getIsAnonymous()) > 0;
+        /*String dateVal = "\"" + dateFormat.format(date) + " +05:30" + "\"";
+        String commentInsertQ = "insert into comments(content, posted_dt_tm, anonymous) " +
+                "values " +
+                "(\"" + commentData.getContent()  + "\", " + dateVal + ", ?)";*/
+
+        String commentInsertQ = "insert into comments(content, posted_dt_tm, anonymous) values (?, NOW(), ?)";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        boolean success = jdbcTemplate.update(
+                con -> {
+                    PreparedStatement ps = con.prepareStatement(commentInsertQ, new String[] {"comment_id"});
+                    ps.setString(1, commentData.getContent());
+                    ps.setBoolean(2, commentData.getIsAnonymous());
+
+                    return ps;
+                }, keyHolder) > 0;
+
+        String postCommentsInsertQ = "insert into post_comments(user_id, post_id, comment_id) values(?, ?, ?)";
+
+        Integer commentId = Objects.requireNonNull(keyHolder.getKey()).intValue();
+        success = (jdbcTemplate.update(postCommentsInsertQ, commentData.getPostedbyUid(), commentData.getPostedonPid(), commentId) > 0) && success;
+
+        return success;
     }
 
     @Override

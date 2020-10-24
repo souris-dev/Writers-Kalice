@@ -2,78 +2,32 @@ import React from 'react';
 import logo from './public/assets/logo.png';
 import './css/build/tailwind.css';
 import PopupMenuList from './PopupMenuList';
-import Chip from '@material-ui/core/Chip';
-import serverUrl from './appconfig';
-
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import Post from './Post';
-import InterestChip from './InterestChip';
-import { tagToId } from './utils';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />
 }
 
-export default class NewPostPage extends React.Component {
+export default class SeenPostsPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            interestTags: [],
-            title: '',
-            content: '',
-            anonymous: false,
-            above_eighteen: false,
-            successSnkOpen: false,
-            failedSnkOpen: false,
-            warnSnkOpen: false,
-            errorText: '',
-            successText: '',
-            warnText: '',
-        };
+            posts: []
+        }
 
+        this.handleWrite = this.handleWrite.bind(this);
         this.handleProfileSettings = this.handleProfileSettings.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
         this.handleVR = this.handleVR.bind(this);
-        
-        this.handlePost = this.handlePost.bind(this);
-        this.handleOptions = this.handleOptions.bind(this);
     }
 
-    handleOptions(event) {
-        const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        const optionName = target.name;
-
-        this.setState(state => ({
-            [optionName]: value
-        }));
-    }
-
-    addTag(interest) {
-        console.log(this.state.interestTags);
-        this.setState(state => {
-            const interestTags = state.interestTags.concat(interest);
-            return {
-                interestTags: interestTags
-            };
-        });
-    }
-
-    removeTag(interest) {
-        console.log(this.state.interestTags);
-        function arrayRemove(arr, value) {
-
-            return arr.filter(function (elem) {
-                return elem != value;
-            });
-
-        }
-        this.setState(state => ({
-            interestTags: arrayRemove(state.interestTags, interest)
-        }));
+    handleWrite() {
+        console.log("Write");
+        window.setTimeout(() => this.props.history.push('/write'), 10);
     }
 
     handleProfileSettings() {
@@ -88,49 +42,9 @@ export default class NewPostPage extends React.Component {
         console.log("View requests");
     }
 
-    handlePost() {
-        if (!this.state.title || !this.state.content) {
-            this.setState({
-                errorText: 'A blank post? Really?',
-                failedSnkOpen: true,
-            });
-            return;
-        }
-
-        // send post
-
-        fetch(serverUrl + "/posts/createpost", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                title: this.state.title,
-                content: this.state.content,
-                isAboveEighteen: this.state.above_eighteen,
-                anonymous: this.state.anonymous,
-                postedbyUid: window.localStorage.getItem("wKuid"),
-                tags: this.state.interestTags.map((tag) => tagToId(tag)),
-            })
-        }).then((respone) => {
-            if (respone.ok) {
-                this.setState({
-                    successText: 'Posted!',
-                    successSnkOpen: true,
-                });
-        
-                window.setTimeout(() => this.props.history.push('/feed'), 1000);
-            }
-            else {
-                this.setState({
-                    errorText: 'Could not post!',
-                    failedSnkOpen: true,
-                });
-            }
-        });
-    }
-
     render() {
         return (
-            <div className="flex flex-col h-screen bg-gray-900">
+            <div className="flex flex-col bg-gray-900">
                 <nav className="bg-gray-800">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center justify-between h-16">
@@ -149,12 +63,10 @@ export default class NewPostPage extends React.Component {
                                         <Link to="/savedPosts">
                                         <a href="#"
                                                 className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Saved Posts</a>
+                                            
                                         </Link>
-
-                                        <Link to="/seenPosts">
                                         <a href="#"
-                                                className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Seen Posts</a>
-                                        </Link>
+                                            className="px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Seen Posts</a>
                                     </div>
                                 </div>
                             </div>
@@ -169,7 +81,9 @@ export default class NewPostPage extends React.Component {
                                         </svg>
                                     </button>*/}
 
-                                    
+                                    <button className="text-white  bg-indigo-600 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-700 rounded justify-center text-lg" onClick={this.handleWrite}>
+                                        Write
+                                        </button>
                                     {/* Profile dropdown */}
                                     <div className="ml-3 mt-1 relative">
                                         <PopupMenuList name='User' onLogout={this.handleLogout} onVR={this.handleVR} onProfile={this.handleProfileSettings} />
@@ -202,9 +116,10 @@ export default class NewPostPage extends React.Component {
       */}
                     <div className='hidden'>
                         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                            <Link to="/feed">
                             <a href="#"
-                                className="block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Feed</a>
-
+                                    className="block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Feed</a>
+                                </Link>
                             <a href="#"
                                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Team</a>
 
@@ -248,78 +163,56 @@ export default class NewPostPage extends React.Component {
                 <header className="bg-gray-800 shadow">
                     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         <h1 className="text-3xl font-bold leading-tight text-white">
-                            Write
+                            Previously seen
                 </h1>
                     </div>
                 </header>
 
                 <main className="flex-grow">
-                    <section className="text-gray-500 bg-gray-900 body-font relative">
-                        <div className="container px-5 py-12 mx-auto">
-                            <div className="flex flex-col text-center w-full mb-12">
-                                <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-white">Scream out your genius!</h1>
-                                <p className="lg:w-2/3 mx-auto leading-relaxed text-base">Markdown support is planned for the future. Also, feel free to drag down the text area to enlarge it for comfort!</p>
-                            </div>
-                            <div className="lg:w-full h-full md:w-full mx-auto">
-                                <div className="flex flex-col flex-wrap -m-2">
-                                    <div className="p-2 w-full">
-                                        <input className="w-full bg-gray-900 rounded border border-gray-700 text-white focus:outline-none focus:border-indigo-800 text-base px-4 py-2" placeholder="Title" type="text" onChange={this.handleOptions} name="title" />
-                                    </div>
+                    <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 bg-gray-900">
+                        {/* Replace with your content */}
+                        <section className="text-gray-500 bg-gray-900 body-font overflow-hidden">
+                            <div className="container px-5 py-24 mx-auto">
+                                <div className="flex flex-wrap -m-12">
+                                    
+                                {this.state.posts.map((post) => {
+                                        console.log(post);
+                                        return <Post content={post.content} title={post.title}
+                                            key={post.id}
+                                            id={post.id}
+                                            nPosReactions={post.nposReactions.toString()}
+                                            nNegReactions={post.nnegReactions.toString()}
+                                            nComments={post.ncomments.toString()} anonymous={post.anonymous}
+                                            postedbyUsername={post.postedbyUsername} viewReqType={false}
+                                            tags={post.tags}
+                                        />
+                                        }
+                                    )}
 
-                                    <div className="p-2 w-full">
-                                        <textarea className="w-full  bg-gray-900 rounded border h-56 border-gray-700 text-white focus:outline-none focus:border-indigo-800 text-base px-4 py-2 block" placeholder="Content" onChange={this.handleOptions} name="content"></textarea>
-                                    </div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2">
-                                <div className="mt-10 block text-gray-400">
-                                    <p className="font-semibold text-lg mb-2 mt-2">Post Settings</p>
-                                    <div className="mt-2 text-gray-400">
-                                        <div>
-                                            <label className="inline-flex items-center">
-                                                <input type="checkbox" className="form-checkbox form-checkbox-dark text-indigo-600" checked={this.state.anonymous} onChange={this.handleOptions} name="anonymous" />
-                                                <span className="ml-2 form text-gray-400 font-thin">Post anonymously</span>
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <label className="inline-flex items-center">
-                                                <input type="checkbox" className="form-checkbox form-checkbox-dark text-pink-500" checked={this.state.above_eighteen} onChange={this.handleOptions} name="above_eighteen" />
-                                                <span className="font-thin text-gray-400 ml-2">For 18+ audience</span>
-                                            </label>
-                                        </div>
+                            <div className="grid grid-cols-5 place-content-center h-48">
+                                <div className="text-gray-700 text-center px-4 py-2 m-2"></div>
+                                <div className="text-gray-700 text-center px-4 py-2 m-2"></div>
+                                <button className="text-white  bg-gray-700 border-0 py-2 px-8 focus:outline-none hover:bg-gray-800 rounded justify-center text-lg" onClick={this.handleProfileMenuOpen}>
+                                    More
+                        </button>
+                                <div className="text-gray-700 text-center px-4 py-2 m-2"></div>
+                                <div className="text-gray-700 text-center px-4 py-2 m-2"></div>
+                            </div>
+                        </section>
+                        {/* /End replace */}
 
-                                        <div className="p-2 w-full">
-                                            <button className="flex mx-auto text-white bg-indigo-600 border-0 py-2 px-10 focus:outline-none hover:bg-indigo-700 rounded text-lg"
-                                            onClick={this.handlePost}>Post</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="mt-10 block text-gray-400">
-                                    <p className="font-semibold text-lg mb-1 mt-2">Add Tags</p>
-                                    <p className="text-hairline mb-3">Click on tags to toggle them. Filled tags are applied, and outlined ones are not.</p>
-                                    <div className="grid-flow-row">
-                                        
-                                        <InterestChip text="Poetry" onOn={() => this.addTag('poetry')} onOff={() => this.removeTag('poetry')} />
-                                        <InterestChip text="Prose" onOn={() => this.addTag('prose')} onOff={() => this.removeTag('prose')} />
-                                        <InterestChip text="Short stories" onOn={() => this.addTag('short_stories')} onOff={() => this.removeTag('short_stories')} />
-                                        <InterestChip text="Idle thoughts" onOn={() => this.addTag('idle_thoughts')} onOff={() => this.removeTag('idle_thoughts')} />
-                                        <InterestChip text="Parody" onOn={() => this.addTag('parody')} onOff={() => this.removeTag('parody')} />
-                                        <InterestChip text="Jokes" onOn={() => this.addTag('jokes')} onOff={() => this.removeTag('jokes')} />
-                                        <InterestChip text="Nature" onOn={() => this.addTag('nature')} onOff={() => this.removeTag('nature')} />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                    </div>
                 </main>
                 <footer className="text-gray-500 bg-gray-900 body-font min-h-0">
-                    <div className="container px-5 py-8 mx-auto text-gray-500 bg-gray-900 flex items-center sm:flex-row flex-col">
+                    <div className="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
                         <a className="flex title-font font-medium items-center md:justify-start justify-center text-white">
                             <img src={logo} className="h-10" />
                         </a>
                         {/*<p className="text-sm text-gray-600 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-800 sm:py-2 sm:mt-0 mt-4">© 2020 tailblocks —
                 <a href="https://twitter.com/knyttneve" className="text-gray-500 ml-1" target="_blank" rel="noopener noreferrer">@knyttneve</a>
-                                                    </p>*/}
+              </p>*/}
                         <span className="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
                             <a className="text-gray-600">
                                 <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -354,21 +247,6 @@ export default class NewPostPage extends React.Component {
                         </span>
                     </div>
                 </footer>
-                <Snackbar open={this.state.successSnkOpen} autoHideDuration={2000} onClose={() => this.setState({ successSnkOpen: false })}>
-                    <Alert onClose={() => this.setState({ successSnkOpen: false })} severity="success">
-                        {this.state.successText}
-                    </Alert>
-                </Snackbar>
-                <Snackbar open={this.state.failedSnkOpen} autoHideDuration={2000} onClose={() => this.setState({ failedSnkOpen: false })}>
-                    <Alert onClose={() => this.setState({ successSnkOpen: false })} severity="error">
-                        {this.state.errorText}
-                    </Alert>
-                </Snackbar>
-                <Snackbar open={this.state.warnSnkOpen} autoHideDuration={2000} onClose={() => this.setState({ warnSnkOpen: false })}>
-                    <Alert onClose={() => this.setState({ warnSnkOpen: false })} severity="warning">
-                        {this.state.warnText}
-                    </Alert>
-                </Snackbar>
             </div>
         );
     }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReactOnPostData {
-    private String reactedbyUid;
+    private Integer reactedbyUid;
     private Integer reactedonPid;
     private Integer reactionId;
 }

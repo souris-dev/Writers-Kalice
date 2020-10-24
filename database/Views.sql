@@ -16,19 +16,19 @@ FROM (
             SELECT p.post_id as post_id, p.content as content, p.title as title,
                p.anonymous as anonymous, min_rank, expiry_date, posted_date,
                is_above_eighteen, postedby_uid,
-               COUNT(pcom.comment_id) as n_comments,
-               SUM(
+               COALESCE(COUNT(pcom.comment_id), 0) as n_comments,
+               COALESCE(SUM(
                     CASE rcn.pos_neg
                         WHEN 'positive' THEN 1
                         ELSE 0
                     END
-                ) AS n_pos_rcn,
-               SUM (
+                ), 0) AS n_pos_rcn,
+               COALESCE(SUM (
                    CASE rcn.pos_neg
                         WHEN 'negative' THEN 1
                         ELSE 0
                    END
-                ) AS n_neg_rcn
+                ), 0) AS n_neg_rcn
             FROM reactions rcn
             RIGHT JOIN post_reactions prcn ON prcn.reaction_id = rcn.reaction_id
             RIGHT JOIN posts p ON p.post_id = prcn.post_id
@@ -43,9 +43,12 @@ FROM (
 LEFT JOIN post_interests pint ON interm_no_interests.post_id = pint.post_id
 WHERE posts_postedby_uname.post_id = interm_no_interests.post_id;
 
+insert into post_reactions values (2, 1, 1, false);
+
 
 -- /posts/getComments
 -- Note: This view DOES NOT join the posts table.
+drop view get_comments;
 CREATE OR REPLACE VIEW get_comments AS
 SELECT pc.post_id, pc.user_id as postedby_uid, ut.username as postedby_username,
        c.content, c.anonymous, c.posted_dt_tm

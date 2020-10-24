@@ -3,9 +3,18 @@ import serverUrl from './appconfig';
 import './css/build/tailwind.css';
 import PopupMenuList from './PopupMenuList';
 import Post from './Post';
+import { Link } from 'react-router-dom';
 import logo from './public/assets/logo.png';
 
 import Comment from './Comment';
+
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />
+}
+
 
 export default class PostDisplayPage extends React.Component {
     constructor(props) {
@@ -13,7 +22,7 @@ export default class PostDisplayPage extends React.Component {
         
         this.state = {
             thisUserComment: ' ',
-            thisAnononymousComment: false,
+            thisAnonymousComment: false,
             thisUserPositiveComment: true,
             comments: [
                 // Sample data
@@ -40,50 +49,263 @@ export default class PostDisplayPage extends React.Component {
                 postedDate: '(Loading...)',
                 content: '(Loading...)',
                 anonymousPost: false,
+                nnegReactions: 0,
+                nposReactions: 0,
             },
             liked: null,
+            successSnkOpen: false,
+            failedSnkOpen: false,
+            warnSnkOpen: false,
+            errorText: '',
+            successText: '',
+            warnText: '',
         };
+
+        this.handleOptions = this.handleOptions.bind(this);
     }
 
-    /*componentDidMount() {
-        fetch(serverUrl + '/posts/getpost?' + (new URLSearchParams({
-            postId: this.props.location.query.postId
-        })), { method: 'GET' })
+    componentDidMount() {
+        fetch(serverUrl + '/posts/getpost?postId=' + this.props.location.query.postId, { method: 'GET' })
             .then((response => response.json()))
             .then((data) => {
+                console.log(data);
                 this.setState({
                     post: {
                         postedbyUsername: data.postedbyUsername,
                         content: data.content,
                         title: data.title,
-                        postedDate: data.postedOn,
-                        anonymousPost: data.anonymous
+                        postedDate: data.postedOn.toString(),
+                        anonymousPost: data.anonymous,
+                        nnegReactions: data.nnegReactions,
+                        nposReactions: data.nposReactions
                     }
                 })
 
+                console.log(this.state.post.postedbyUsername);
+
                 // now get the author profile
-                fetch(serverUrl + '/users/getprofiledisplay?' + (new URLSearchParams({
-                    username: this.state.post.postedbyUsername
-                }))).then((response) => response.json())
+                fetch(serverUrl + '/users/getprofiledisplay?username=' + this.state.post.postedbyUsername)
+                    .then((response) => response.json())
                     .then((data) => {
-                        this.setState({
-                            post: {
-                                postedbyBio: data.showBio ? data.bio : '(Not permitted to be shown)'
+                        this.setState((state) => {
+                            return {
+                                post: {
+                                    postedbyUsername: state.post.postedbyUsername,
+                                    content: state.post.content,
+                                    title: state.post.title,
+                                    postedDate: state.post.postedDate,
+                                    anonymousPost: state.post.anonymousPost,
+                                    nnegReactions: state.post.nnegReactions,
+                                    nposReactions: state.post.nposReactions,
+                                    postedbyBio: data.showBio ? data.bio : '(Not permitted to be shown)'
+                                }
                             }
                         })
 
                         // finally, get the comments too
-                        fetch(serverUrl + '/posts/getcomments?' + (new URLSearchParams({
-                            postId: this.props.location.query.postId
-                        }))).then((response) => response.json())
-                            .then((data) => {
-                                this.setState({
-                                    comments: data
-                                })
-                            });
+                        this.retrieveComments()
                     });
             });
-    }*/
+    }
+
+    retrieveComments() {
+        fetch(serverUrl + '/posts/getcomments?postId=' + this.props.location.query.postId)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                this.setState({
+                    comments: data
+                })
+            });
+    }
+
+    handleWrite() {
+        window.setTimeout(() => this.props.history.push('/write'), 10);
+    }
+
+    handleLike() {
+        if (this.state.liked != null) {
+            return;
+        }
+        fetch(serverUrl + '/posts/reacton', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                reactedbyUid: window.localStorage.getItem("wKuid"),
+                reactedonPid: this.props.location.query.postId,
+                reactionId: 1, // reaction id 1 is for like
+            })
+        }).then((response) => {
+            if (response.status == 200) {
+                this.setState((state) => {
+                    return {
+                        post: {
+                            postedbyUsername: state.post.postedbyUsername,
+                            content: state.post.content,
+                            title: state.post.title,
+                            postedDate: state.post.postedDate,
+                            anonymousPost: state.post.anonymousPost,
+                            nnegReactions: state.post.nnegReactions,
+                            nposReactions: state.post.nposReactions + 1,
+                            postedbyBio: state.post.bio,
+                            liked: true,
+                        },
+                        successSnkOpen: true,
+                        successText: 'You liked the post!',
+                    }
+                });
+            }
+            else {
+                response.json()
+                    .then((data) => {
+                        if (data.reason == 'only_once') {
+                            this.setState({
+                                failedSnkOpen: true,
+                                errorText: "You've reacted on this already!",
+                            });
+                        }
+                        else {
+                            this.setState({
+                                failedSnkOpen: true,
+                                errorText: "Failed to like!",
+                            });
+                        }
+                })
+            }
+        }).catch(() => {
+            this.setState({
+                failedSnkOpen: true,
+                errorText: 'Failed to like the post!',
+            });
+        });
+    }
+
+    handleDislike() {
+        if (this.state.liked != null) {
+            return;
+        }
+        fetch(serverUrl + '/posts/reacton', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                reactedbyUid: window.localStorage.getItem("wKuid"),
+                reactedonPid: this.props.location.query.postId,
+                reactionId: 2, // reactions id 2 is for dislike
+            })
+        }).then((response) => {
+            if (response.status == 200) {
+                this.setState((state) => {
+                    return {
+                        post: {
+                            postedbyUsername: state.post.postedbyUsername,
+                            content: state.post.content,
+                            title: state.post.title,
+                            postedDate: state.post.postedDate,
+                            anonymousPost: state.post.anonymous,
+                            nnegReactions: state.post.nnegReactions + 1,
+                            nposReactions: state.post.nposReactions,
+                            postedbyBio: state.post.bio,
+                            liked: false,
+                        },
+                        warnSnkOpen: true,
+                        warnText: 'You disliked the post.',
+                    }
+                });
+            }
+            else {
+                response.json()
+                    .then((data) => {
+                        if (data.reason == 'only_once') {
+                            this.setState({
+                                failedSnkOpen: true,
+                                errorText: "You've reacted on this already!",
+                            });
+                        }
+                        else {
+                            this.setState({
+                                failedSnkOpen: true,
+                                errorText: "Failed to dislike!",
+                            });
+                        }
+                })
+            }
+        }).catch(() => {
+            this.setState({
+                failedSnkOpen: true,
+                errorText: 'Failed to like the post!',
+            });
+        });
+    }
+
+    handlePostComment() {
+        console.log(this.state.thisAnonymousComment);
+        fetch(serverUrl + '/posts/commenton', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                content: this.state.thisUserComment,
+                isPositive: true,
+                isAnonymous: this.state.thisAnonymousComment,
+                postedbyUid: window.localStorage.getItem("wKuid"),
+                postedonPid: this.props.location.query.postId,
+            })
+        }).then((response) => {
+            if (response.status == 200) {
+                this.retrieveComments();
+            }
+            else {
+                this.setState({
+                    failedSnkOpen: true,
+                    errorText: 'Failed to comment!',
+                });
+            }
+        })
+    }
+
+    handleSavePost() {
+        fetch(serverUrl + '/posts/savepost', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId: window.localStorage.getItem("wKuid"),
+                postId: this.props.location.query.postId,
+            })
+        }).then((response) => {
+            if (response.status == 200) {
+                this.setState({
+                    successSnkOpen: true,
+                    successText: 'Post saved to collection!',
+                });
+            }
+            else {
+                response.json()
+                    .then((data) => {
+                        if (data.reason == 'only_once') {
+                            this.setState({
+                                failedSnkOpen: true,
+                                errorText: "You've saved this already!",
+                            });
+                        }
+                        else {
+                            this.setState({
+                                failedSnkOpen: true,
+                                errorText: "Failed to save to collection!",
+                            });
+                        }
+                })
+            }
+        })
+    }
+
+    handleOptions(event) {
+        const target = event.target;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        const optionName = target.name;
+
+        this.setState(state => ({
+            [optionName]: value
+        }));
+    }
 
     render() {
         return (
@@ -99,11 +321,19 @@ export default class PostDisplayPage extends React.Component {
                                 </div>
                                 <div className="hidden md:block">
                                     <div className="ml-10 flex items-baseline space-x-4">
-                                        <a href="#"
-                                            className="px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Feed</a>
+                                        <Link to="/feed" ><a href="#"
+                                            className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Feed</a></Link>
 
+                                        <Link to="/savedPosts">
                                         <a href="#"
-                                            className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Saved Posts</a>
+                                                className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Saved Posts</a>
+                                            </Link>
+                                            
+                                            <Link to="/seenPosts">
+                                            <a href="#"
+                                                    className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Seen Posts</a>
+                                            </Link>
+                                            
                                     </div>
                                 </div>
                             </div>
@@ -209,31 +439,37 @@ export default class PostDisplayPage extends React.Component {
 
                                     <div className=" bg-white flex flex-col md:ml-auto w-full">
                                         <p className="text-4xl mb-1 mt-6">{this.state.post.title}</p>
-                                                <p className="font-thin text-xl mt-2 leading-5">By <span className="font-normal">{this.state.post.postedbyUsername}</span> on {this.state.post.postedDate.toString()} <span className="ml-6"></span>
+                                                <p className="font-thin text-xl mt-2 leading-5">By <span className="font-normal">{this.state.post.postedbyUsername}</span> on {this.state.post.postedDate} <span className="ml-6"></span>
                                         <span
                                         className="text-gray-600 mr-3 inline-flex items-center ml-auto leading-none text-sm pr-3 py-1 border-gray-800">
 
                                             {/* Like, dislike view request buttons*/}
-                                            <button onClick={() => console.log(this.props.location.query.postId)}>
+                                            <button onClick={() => this.handleLike()}>
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5">
                                                     </path>
                                                 </svg>
-                                            </button>1.2K
+                                            </button>{this.state.post.nposReactions}
                                             <span className="ml-4"></span>
-                                            <button>
+                                            <button onClick={() => this.handleDislike()}>
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5">
                                                     </path>
                                                 </svg>
-                                            </button>1K
+                                            </button>{this.state.post.nnegReactions}
                                             <span className="ml-4"></span>
                                             <button>
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
                                                 </svg>
+                                                        </button>
+                                            <span class="ml-4" />
+                                            <button onClick={() => this.handleSavePost()}>
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
                                             </button>
-                                        </span></p>
+                                            </span>
+                                            
+                                            </p>
                                         <div className="mt-4 leading-7">
                                                     <p className="text-lg font-normal mt-4">{this.state.post.content}</p>
                                     </div></div>
@@ -255,24 +491,24 @@ export default class PostDisplayPage extends React.Component {
                                         <p className="text-white text-4xl px-3">Comments</p>
                                         
                                         <div className="w-full mt-8 px-4">
-                                            <textarea className="w-full bg-gray-800 rounded border border-gray-700 text-white focus:outline-none h-20 focus:border-blue-500 text-base px-4 py-2 resize-none block" placeholder="Post your comment"></textarea>
+                                            <textarea className="w-full bg-gray-800 rounded border border-gray-700 text-white focus:outline-none h-20 focus:border-blue-500 text-base px-4 py-2 resize-none block" placeholder="Post your comment" name="thisUserComment" onChange={this.handleOptions}></textarea>
                                         </div>
                                         
                                         <div className="grid lg:grid-cols-4 md:grid-cols-4 sm:grid-cols-1">
                                             <label className="inline-flex items-center ml-6 mt-2">
-                                                <input type="checkbox" className="form-checkbox form-checkbox-dark text-indigo-600" checked />
+                                                <input type="checkbox" className="form-checkbox form-checkbox-dark text-indigo-600" onChange={this.handleOptions} name="thisAnonymousComment" />
                                                 <span className="ml-2 text-gray-400 font-thin">Anonymous</span>
                                             </label>
                                             <label className="inline-flex items-center ml-6 mt-3">
-                                                <input type="radio" className="form-radio form-radio-dark text-green-500" name="accountType" value="personal" />
+                                                <input type="radio" className="form-radio form-radio-dark text-green-500" name="accountType" value="positive" />
                                                 <span className="ml-2">Positive</span>
                                               </label>
                                               <label className="inline-flex items-center ml-6 mt-3">
-                                                <input type="radio" className="form-radio form-radio-dark text-red-600" name="accountType" value="busines" />
+                                                <input type="radio" className="form-radio form-radio-dark text-red-600" name="accountType" value="negative" />
                                                 <span className="ml-2">Negative</span>
                                               </label>
                                             <div className="p-2 w-full mt-3">
-                                                <button className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg">Post</button>
+                                                <button onClick={() => this.handlePostComment()} className="flex mx-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg">Post</button>
                                             </div>
                                         </div>
 
@@ -346,7 +582,23 @@ export default class PostDisplayPage extends React.Component {
                     </span>
                 </div>
             </footer>
-        </div></div>
+                </div>
+                <Snackbar open={this.state.successSnkOpen} autoHideDuration={2000} onClose={() => this.setState({ successSnkOpen: false })}>
+          <Alert onClose={() => this.setState({ successSnkOpen: false })} severity="success">
+            {this.state.successText}
+          </Alert>
+        </Snackbar>
+        <Snackbar open={this.state.failedSnkOpen} autoHideDuration={2000} onClose={() => this.setState({ failedSnkOpen: false })}>
+          <Alert onClose={() => this.setState({ successSnkOpen: false })} severity="error">
+            {this.state.errorText}
+          </Alert>
+        </Snackbar>
+        <Snackbar open={this.state.warnSnkOpen} autoHideDuration={2000} onClose={() => this.setState({ warnSnkOpen: false })}>
+          <Alert onClose={() => this.setState({ warnSnkOpen: false })} severity="warning">
+            {this.state.warnText}
+          </Alert>
+        </Snackbar>
+            </div>
         );
     }
 }

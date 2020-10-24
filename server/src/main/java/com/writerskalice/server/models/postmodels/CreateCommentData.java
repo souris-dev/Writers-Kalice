@@ -13,4 +13,5 @@ public class CreateCommentData {
     private Boolean isAnonymous;
 
     private Integer postedbyUid;
+    private Integer postedonPid;
 }

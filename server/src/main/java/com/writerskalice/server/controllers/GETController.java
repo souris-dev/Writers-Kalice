@@ -210,8 +210,13 @@ public class GETController {
         /*return new UserDisplayProfile("Souris Ash",
                 "sachett", 2, "Rookie", 2f, "A good boy", true, true, true);*/
 
+        System.out.println("Lolololol");
+
         try {
-            return userRepository.retrieveUserDisplay(username);
+            System.out.println(username);
+            UserDisplayProfile displayProfile = userRepository.retrieveUserDisplay(username);
+            System.out.println(displayProfile.toString());
+            return displayProfile;
         }
         catch (EmptyResultDataAccessException ex) {
             ex.printStackTrace();

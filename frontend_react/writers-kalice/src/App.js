@@ -20,10 +20,13 @@ function Landing() {
   var password = '';
   if (window.localStorage) {
     username = window.localStorage.getItem('wKusername');
-    password = window.localStorage.getItem('wKpass');
+    password = window.localStorage.getItem('wKpassword');
   }
 
-  if (!username || !password) {
+  console.log(username)
+  console.log(password)
+
+  if (username == '' || username == null || password == '' || password == null) {
     return new SignInPage();
   }
   else {

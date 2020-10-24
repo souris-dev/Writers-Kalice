@@ -4,7 +4,7 @@
 CREATE FUNCTION on_react() RETURNS trigger as $on_react_trigger$
     DECLARE
         post_reacted_on INTEGER;
-        uid_to_update VARCHAR;
+        uid_to_update INTEGER;
         user_whose_post RECORD;
         pos_or_neg RECORD;
         new_npos INTEGER;
@@ -60,3 +60,6 @@ $on_react_trigger$ language plpgsql;
 CREATE TRIGGER on_react_trigger
     AFTER INSERT ON post_reactions
     FOR EACH ROW EXECUTE PROCEDURE on_react();
+
+drop trigger on_react_trigger on post_reactions;
+drop function on_react;

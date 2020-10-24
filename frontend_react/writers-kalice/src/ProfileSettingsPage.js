@@ -8,7 +8,7 @@ import PopupMenuList from './PopupMenuList';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />
@@ -53,6 +53,11 @@ class ProfileSettingsPage extends React.Component {
         });
     }
 
+    handleWrite() {
+        console.log("Write");
+        window.setTimeout(() => this.props.history.push('/write'), 10);
+    }
+
     removeTag(interest) {
         console.log(this.state.interestTags);
         function arrayRemove(arr, value) {
@@ -91,11 +96,20 @@ class ProfileSettingsPage extends React.Component {
                                     </div>
                                     <div className="hidden md:block">
                                         <div className="ml-10 flex items-baseline space-x-4">
+                                            <Link to="/feed">
                                             <a href="#"
-                                                className="px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Feed</a>
-
+                                                    className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Feed</a>
+                                            </Link>
+                                            
+                                            <Link to="/savedPosts">
                                             <a href="#"
                                                 className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Saved Posts</a>
+                                            </Link>
+
+                                            <Link to="/seenPosts">
+                                            <a href="#"
+                                                    className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Seen Posts</a>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>
@@ -216,7 +230,7 @@ class ProfileSettingsPage extends React.Component {
                                                     placeholder="Email" type="email" name="email" onChange={this.handleOptions} />
 
                                                 <p className="font-semibold text-lg mb-2 mt-2">About Me</p>
-                                                <p className="font-thin mb-4">A short description about you.</p>
+                                                <p className="font-thin mb-4">A short description about yourself.</p>
                                                 <textarea
                                                     className="bg-white rounded border border-gray-400 focus:outline-none h-32 focus:border-purple-500 text-base px-4 py-2 mb-4 resize-none"
                                                     placeholder="Bio" name="bio" onChange={this.handleOptions}></textarea>

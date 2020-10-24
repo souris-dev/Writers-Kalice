@@ -15,3 +15,14 @@ insert into privacy_details(show_interests, show_name, show_bio) values
 -- Interest tags
 insert into interest_tags(description) values
 ('poetry'), ('prose'), ('short_stories'), ('idle_thoughts'), ('parody'), ('jokes'), ('nature');
+
+-- Insert reactions
+insert into reactions values
+(1, 'Like', 'positive'),
+(2, 'Dislike', 'negative');
+
+-- For test:
+truncate post_reactions;
+insert into post_reactions values (2, 1, 1, false);
+
+update profiles set npos_reacts = 0 where user_id = 2;
