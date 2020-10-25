@@ -198,7 +198,7 @@ export default class ViewRequestsPage extends React.Component {
                                             nPosReactions={post.nposReactions.toString()}
                                             nNegReactions={post.nnegReactions.toString()}
                                             nComments={post.ncomments.toString()} anonymous={post.anonymous}
-                                            postedbyUsername={post.postedbyUsername} viewReqType={false}
+                                            postedbyUsername={post.postedbyUsername} viewReqType={true}
                                             sentbyUsername={post.sentbyUsername}
                                             tags={post.tags}
                                         />

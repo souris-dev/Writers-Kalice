@@ -74,6 +74,7 @@ export default class PostDisplayPage extends React.Component {
         };
 
         this.handleOptions = this.handleOptions.bind(this);
+        this.handleWrite = this.handleWrite.bind(this);
     }
 
     componentDidMount() {

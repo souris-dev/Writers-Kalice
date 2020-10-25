@@ -30,7 +30,7 @@ function Landing() {
     return new SignInPage();
   }
   else {
-    return new Feed();
+    return <Redirect to="/feed" />
   }
 }
 
@@ -195,7 +195,8 @@ class SignInPage extends React.Component {
                 <h2 className="text-white text-lg font-medium title-font mb-5">Sign In</h2>
                 <input className="bg-gray-900 rounded border font-mono tracking-widest text-white border-gray-900 focus:outline-none focus:border-purple-500 text-base px-4 py-2 mb-4" placeholder="Username" type="text" name="username" onChange={this.handleChange} />
                 <input type="password" className="bg-gray-900 tracking-widest rounded border font-mono text-white border-gray-900 focus:outline-none focus:border-purple-500 text-base px-4 py-2 mb-4" placeholder="Password" name="password" onChange={this.handleChange} />
-                <p className="text-sm text-gray-600 mb-6"><a className="text-purple-500 inline-flex items-center" href="#" onClick={() => { this.setState({ warnText: 'Planned for the future!', warnSnkOpen: true }) }}>Forgot password?</a></p>
+                <p><br /><br /></p>
+                {/*<p className="text-sm text-gray-600 mb-6"><a className="text-purple-500 inline-flex items-center" href="#" onClick={() => { this.setState({ warnText: 'Planned for the future!', warnSnkOpen: true }) }}>Forgot password?</a></p>*/}
                 <button className="text-white bg-purple-500 border-0 py-2 px-8 focus:outline-none hover:bg-purple-600 rounded text-lg" onClick={this.handleSubmit}>
                   Open Sesame!
               </button>
