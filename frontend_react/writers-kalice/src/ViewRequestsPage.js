@@ -4,6 +4,8 @@ import './css/build/tailwind.css';
 import PopupMenuList from './PopupMenuList';
 import { Link } from 'react-router-dom';
 
+import serverUrl from "./appconfig";
+
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import Post from './Post';
@@ -23,6 +25,17 @@ export default class ViewRequestsPage extends React.Component {
         this.handleProfileSettings = this.handleProfileSettings.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
         this.handleVR = this.handleVR.bind(this);
+    }
+
+    componentDidMount() {
+        fetch(serverUrl + "/users/getviewrequests?userId=" + window.localStorage.getItem("wKuid"), { method: 'GET' })
+            .then((respone) => respone.json())
+            .then((data) => {
+                console.log(data);
+                this.setState({
+                    posts: data
+                });
+            }); 
     }
 
     handleWrite() {
@@ -186,6 +199,7 @@ export default class ViewRequestsPage extends React.Component {
                                             nNegReactions={post.nnegReactions.toString()}
                                             nComments={post.ncomments.toString()} anonymous={post.anonymous}
                                             postedbyUsername={post.postedbyUsername} viewReqType={false}
+                                            sentbyUsername={post.sentbyUsername}
                                             tags={post.tags}
                                         />
                                         }

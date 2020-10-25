@@ -2,6 +2,7 @@ package com.writerskalice.server.controllers;
 
 import com.writerskalice.server.dao.PostRepository;
 import com.writerskalice.server.dao.UserRepository;
+import com.writerskalice.server.dao.ViewRequestRepository;
 import com.writerskalice.server.models.getmodels.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -27,6 +28,9 @@ public class GETController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    ViewRequestRepository viewRequestRepository;
+
     @GetMapping("/userhello")
     public String userHello(@RequestParam(name="name", required=false, defaultValue="World!") String name, Model model) {
         model.addAttribute("name", name);
@@ -36,26 +40,6 @@ public class GETController {
     @GetMapping("/posts/getpost")
     @CrossOrigin(origins = "http://localhost:3000")
     public Post getPost(@RequestParam(name="postId") int postId) {
-        /*Post post = new Post();
-        post.setId(postId);
-        post.setContent("This is the content of the post");
-        post.setTitle("Title");
-        post.setNNegReactions(5000);
-        post.setNPosReactions(6000);
-        post.setNComments(4);
-        post.setAnonymous(false);
-        post.setPostedbyUsername("sachett");
-        try {
-            post.setPostedOn(Date.valueOf("2020-02-02"));
-        }
-        catch (IllegalArgumentException ille) {
-            ille.printStackTrace();
-        }
-        ArrayList<String> tags = new ArrayList<>();
-        tags.add("poetry");
-        tags.add("parody");
-        post.setTags(tags);*/
-
         try {
             return postRepository.retrievePost(postId);
         }
@@ -71,12 +55,6 @@ public class GETController {
     @GetMapping("/posts/getcomments")
     @CrossOrigin(origins = "http://localhost:3000")
     public ArrayList<Comment> getComments(@RequestParam(name="postId") int postId) {
-        /*ArrayList<Comment> comments = new ArrayList<>();
-        comments.add(new Comment("Comment 1", "sachett", false));
-        comments.add(new Comment("Comment 2", "sachett", true));
-        comments.add(new Comment("Comment 3", "sachett", false));
-        comments.add(new Comment("Comment 4", "sachett", false));*/
-
         try {
             return postRepository.retrieveComments(postId);
         }
@@ -92,34 +70,6 @@ public class GETController {
     @GetMapping("/posts/getfeed")
     @CrossOrigin(origins = "http://localhost:3000")
     public ArrayList<Post> getFeed(@RequestParam(name="userId") int userId) {
-        /*ArrayList<Post> feedPosts = new ArrayList<>();
-
-        for (int i = 0; i < 5; i++) {
-            Post post = new Post();
-            post.setId(100 + i);
-            post.setContent("This is the content of the post");
-            post.setTitle("Title");
-            post.setNNegReactions(5000);
-            post.setNPosReactions(6000);
-            post.setNComments(4);
-            post.setAnonymous(false);
-            post.setPostedbyUsername("sachett");
-            try {
-                post.setPostedOn(Date.valueOf("2020-02-02"));
-            }
-            catch (IllegalArgumentException pe) {
-                pe.printStackTrace();
-            }
-            ArrayList<String> tags = new ArrayList<>();
-            tags.add("poetry");
-            tags.add("parody");
-            post.setTags(tags);
-
-            feedPosts.add(post);
-        }
-
-        return feedPosts;*/
-
         try {
             return postRepository.retrieveFeed(userId);
         } catch (Exception ex) {
@@ -131,77 +81,46 @@ public class GETController {
     @GetMapping("/posts/getsavedposts")
     @CrossOrigin(origins = "http://localhost:3000")
     public ArrayList<Post> getSavedPosts(@RequestParam(name="userId") int userId) {
-        /*ArrayList<Post> savedPosts = new ArrayList<>();
-
-        for (int i = 0; i < 5; i++) {
-            Post post = new Post();
-            post.setId(100 + i);
-            post.setContent("This is the content of the post");
-            post.setTitle("Title");
-            post.setNNegReactions(5000);
-            post.setNPosReactions(6000);
-            post.setNComments(4);
-            post.setAnonymous(false);
-            post.setPostedbyUsername("sachett");
-            try {
-                post.setPostedOn(Date.valueOf("2020-02-02"));
-            }
-            catch (IllegalArgumentException pe) {
-                pe.printStackTrace();
-            }
-            ArrayList<String> tags = new ArrayList<>();
-            tags.add("poetry");
-            tags.add("parody");
-            post.setTags(tags);
-
-            savedPosts.add(post);
-        }
-
-        return savedPosts;*/
-
         try {
             return postRepository.retrieveSavedPosts(userId);
         }
         catch (EmptyResultDataAccessException ex) {
             ex.printStackTrace();
-            return null;
+            return new ArrayList<>();
         }
         catch (Exception ex) {
-            return null;
+            return new ArrayList<>();
+        }
+    }
+
+    @GetMapping("/posts/getseenposts")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ArrayList<Post> getSeenPosts(@RequestParam(name="userId") int userId) {
+        try {
+            return postRepository.retrieveSeenPosts(userId);
+        }
+        catch (EmptyResultDataAccessException ex) {
+            ex.printStackTrace();
+            return new ArrayList<>();
+        }
+        catch (Exception ex) {
+            return new ArrayList<>();
         }
     }
 
     @GetMapping("/users/getviewrequests")
     @CrossOrigin(origins = "http://localhost:3000")
     public ArrayList<ViewRequestPost> getViewRequests(@RequestParam(name="userId") int userId) {
-        ArrayList<ViewRequestPost> viewReqPosts = new ArrayList<>();
-
-        for (int i = 0; i < 5; i++) {
-            ViewRequestPost post = new ViewRequestPost();
-            post.setId(100 + i);
-            post.setContent("This is the content of the post");
-            post.setTitle("Title");
-            post.setNNegReactions(5000);
-            post.setNPosReactions(6000);
-            post.setNComments(4);
-            post.setAnonymous(false);
-            post.setPostedbyUsername("sachett");
-            post.setSentbyUsername("sachett");
-            try {
-                post.setPostedOn(Date.valueOf("2020-02-02"));
-            }
-            catch (IllegalArgumentException pe) {
-                pe.printStackTrace();
-            }
-            ArrayList<String> tags = new ArrayList<>();
-            tags.add("poetry");
-            tags.add("parody");
-            post.setTags(tags);
-
-            viewReqPosts.add(post);
+        try {
+            return viewRequestRepository.retrieveViewRequestPosts(userId);
         }
-
-        return viewReqPosts;
+        catch (EmptyResultDataAccessException ex) {
+            ex.printStackTrace();
+            return new ArrayList<>();
+        }
+        catch (Exception ex) {
+            return new ArrayList<>();
+        }
     }
 
     @GetMapping("/users/getprofiledisplay")

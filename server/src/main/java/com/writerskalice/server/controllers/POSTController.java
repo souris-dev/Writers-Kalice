@@ -2,6 +2,7 @@ package com.writerskalice.server.controllers;
 
 import com.writerskalice.server.dao.PostRepository;
 import com.writerskalice.server.dao.UserRepository;
+import com.writerskalice.server.dao.ViewRequestRepository;
 import com.writerskalice.server.models.postmodels.SetSeenData;
 import com.writerskalice.server.models.deletemodels.ViewRequestSeenData;
 import com.writerskalice.server.models.postmodels.*;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class POSTController {
 
     @Autowired
@@ -18,6 +20,9 @@ public class POSTController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ViewRequestRepository viewRequestRepository;
 
     @PostMapping("/users/checksignin")
     @CrossOrigin(origins = "http://localhost:3000")
@@ -70,7 +75,20 @@ public class POSTController {
     @PostMapping("/users/sendviewrequest")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> sendViewRequest(@RequestBody SendViewRequestData sendViewRequestData) {
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            var res = viewRequestRepository.sendViewRequest(sendViewRequestData);
+            if (!res)
+                throw new Exception();
+            else
+                return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            if (e.getMessage().contains("view_requests_pk"))
+                return new ResponseEntity<>("{\"reason\":\"only_once\"}", HttpStatus.ALREADY_REPORTED);
+            else
+                return new ResponseEntity<>(null, HttpStatus.NOT_MODIFIED);
+        }
     }
 
     @PostMapping("/posts/commenton")

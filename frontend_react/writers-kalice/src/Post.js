@@ -4,6 +4,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
 import { useHistory } from 'react-router-dom';
+import serverUrl from "./appconfig";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />
@@ -24,6 +25,8 @@ class Tag extends React.Component {
 class Post extends React.Component {
     constructor(props) {
         super(props);
+
+        console.log(this.props.feedType);
 
         // process the content to show a truncated content
         var string = this.props.content.replace('\n', " ");
@@ -52,10 +55,15 @@ class Post extends React.Component {
     }
 
     handleReadMore() {
-        this.setState({
-            warnSnkOpen: true,
-            warnText: 'Not yet implemented!'
-        })
+        if (this.props.feedType == true)
+            fetch(serverUrl + "/posts/setseen", {
+                method: 'POSTS',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: window.localStorage.getItem("wKuid"),
+                    postId: this.props.id,
+                })
+            })
     }
 
     render() {
@@ -67,7 +75,7 @@ class Post extends React.Component {
                     className="flex flex-col items-start flex-wrap pb-4 mb-4 border-b-2 border-gray-800 mt-auto w-full">
                     <Link to={{
                         pathname: '/post',
-                        query: {postId: this.props.id}
+                        query: {postId: this.props.id, fromFeed: this.props.feedType}
                     }} className="text-purple-500 inline-flex items-center mb-8">Read
                                         <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor"
                             stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">

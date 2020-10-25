@@ -195,10 +195,11 @@ class Feed extends React.Component {
                                             nPosReactions={post.nposReactions.toString()}
                                             nNegReactions={post.nnegReactions.toString()}
                                             nComments={post.ncomments.toString()} anonymous={post.anonymous}
+                                            feedType={true}
                                             postedbyUsername={post.postedbyUsername} viewReqType={false}
                                             tags={post.tags}
                                         />
-                                    }
+                                        }
                                     )}
 
                                 </div>

@@ -124,6 +124,19 @@ public class PostRepository implements IPostDao {
     }
 
     @Override
+    public ArrayList<Post> retrieveSeenPosts(Integer userId) {
+        // First retrieve the saved post IDs
+        ArrayList<Integer> tempPosts = jdbcTemplate.queryForList(
+                "select user_id, post_id from seen_posts where user_id = ?", userId)
+                .stream().map((mapObj) -> (Integer) mapObj.get("post_id"))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // then retrieve the actual posts and send them
+        return tempPosts.stream().map(this::retrievePost)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @Override
     public ArrayList<Post> retrieveFeed(Integer userId) {
         // First check if the user is above eighteen or not
         Boolean isAboveEighteen = jdbcTemplate.queryForObject(
@@ -137,32 +150,22 @@ public class PostRepository implements IPostDao {
                 .stream().map((stringObjectMap) -> (Integer) stringObjectMap.get("post_id"))
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        StringBuilder postIdsSeenStr = new StringBuilder();
-
-        for (Integer i : postIdsSeen) {
-            postIdsSeenStr.append(i.toString()).append(", ");
-        }
-
-        System.out.println(postIdsSeenStr.length());
-
         // Now, get all the post Ids that do not have their post ids in postIdsSeen
         // ordered by their recency
 
         ArrayList<Integer> feedIds;
 
         // Check for above eighteen stuff
-        if (isAboveEighteen && postIdsSeenStr.length() > 1) {
-            // Delete last two characters
-            postIdsSeenStr.deleteCharAt(postIdsSeenStr.length() - 1);
-            postIdsSeenStr.deleteCharAt(postIdsSeenStr.length() - 1);
+        if (isAboveEighteen && postIdsSeen.size() > 1) {
+            // Generate question marks (n question marks for each of the n postIdsSeen ids):
+            String inSql = String.join(",", Collections.nCopies(postIdsSeen.size(), "?"));
 
              feedIds = jdbcTemplate.queryForList(
-                    "select post_id from posts where post_id not in (?)" +
-                            " order by posted_date desc;",
-                    postIdsSeenStr).stream().map((mapObj) -> (Integer) mapObj.get("post_id"))
+                    String.format("select post_id from posts where post_id not in (%s) order by posted_date desc", inSql),
+                    postIdsSeen.toArray()).stream().map((mapObj) -> (Integer) mapObj.get("post_id"))
                     .collect(Collectors.toCollection(ArrayList::new));
         }
-        if (isAboveEighteen && postIdsSeenStr.length() < 1) {
+        if (isAboveEighteen && postIdsSeen.size() < 1) {
 
             feedIds = jdbcTemplate.queryForList(
                     "select post_id from posts" +
@@ -171,10 +174,12 @@ public class PostRepository implements IPostDao {
                     .collect(Collectors.toCollection(ArrayList::new));
         }
         else {
+            String inSql = String.join(",", Collections.nCopies(postIdsSeen.size(), "?"));
+
             feedIds = jdbcTemplate.queryForList(
-                    "select post_id from posts where post_id not in (?)" +
-                            " and is_above_eighteen = false order by posted_date desc;",
-                    postIdsSeenStr).stream().map((mapObj) -> (Integer) mapObj.get("post_id"))
+                    String.format("select post_id from posts where post_id not in (%s) and is_above_eighteen = false" +
+                            " order by posted_date desc", inSql),
+                    postIdsSeen.toArray()).stream().map((mapObj) -> (Integer) mapObj.get("post_id"))
                     .collect(Collectors.toCollection(ArrayList::new));
         }
 
@@ -271,6 +276,7 @@ public class PostRepository implements IPostDao {
 
     @Override
     public Boolean setPostSeen(SetSeenData seenData) {
+        System.out.println("Inserting data into seen");
         return jdbcTemplate.update("insert into seen_posts(user_id, post_id) values (?, ?);",
                 seenData.getUserId(), seenData.getPostId()) > 0;
     }
@@ -278,6 +284,6 @@ public class PostRepository implements IPostDao {
     @Override
     public Boolean addSavedPost(SavePostData savePostData) {
         return jdbcTemplate.update("insert into saved_posts(user_id, post_id) values (?, ?);",
-                savePostData.getUserId(), savePostData.getUserId()) > 0;
+                savePostData.getUserId(), savePostData.getPostId()) > 0;
     }
 }

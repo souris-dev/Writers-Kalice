@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class SendViewRequestData {
     private Integer postId;
     private String usernameToSend;
-    private String sentbyUid;
+    private Integer sentbyUid;
 }

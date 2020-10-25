@@ -221,19 +221,19 @@ class ProfileSettingsPage extends React.Component {
                                         <div className="container px-5 mb-5 mx-auto flex sm:flex-no-wrap flex-wrap">
                                             <div
                                                 className="lg:w-5/12 md:w-5/12 sm:w-5/12 bg-white flex flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0">
-                                                <p className="font-semibold text-lg mb-6 mt-2">Login Details</p>
+                                                <p className="font-semibold text-lg mb-6 mt-2">Personal Details</p>
                                                 <input
                                                     className="bg-white rounded border border-gray-400 focus:outline-none focus:border-purple-500 text-base px-4 py-2 mb-4 tracking-widest font-mono"
-                                                    placeholder="Name" type="text" name="name" onChange={this.handleOptions} />
+                                                    placeholder="Name" type="text" name="name" onChange={this.handleOptions} value={this.state.name} />
                                                 <input
                                                     className="bg-white rounded border border-gray-400 focus:outline-none focus:border-purple-500 text-base px-4 py-2 mb-4 tracking-widest font-mono"
-                                                    placeholder="Email" type="email" name="email" onChange={this.handleOptions} />
+                                                    placeholder="Email" type="email" name="email" onChange={this.handleOptions} value={this.state.email} />
 
                                                 <p className="font-semibold text-lg mb-2 mt-2">About Me</p>
                                                 <p className="font-thin mb-4">A short description about yourself.</p>
                                                 <textarea
                                                     className="bg-white rounded border border-gray-400 focus:outline-none h-32 focus:border-purple-500 text-base px-4 py-2 mb-4 resize-none"
-                                                    placeholder="Bio" name="bio" onChange={this.handleOptions}></textarea>
+                                                    placeholder="Bio" name="bio" onChange={this.handleOptions} value={this.state.bio}></textarea>
 
                                                 <div className="block">
                                                     <p className="font-semibold text-lg mb-2 mt-2">A few more things:</p>

@@ -4,8 +4,10 @@ import com.writerskalice.server.models.deletemodels.ViewRequestSeenData;
 import com.writerskalice.server.models.getmodels.ViewRequestPost;
 import com.writerskalice.server.models.postmodels.SendViewRequestData;
 
+import java.util.ArrayList;
+
 public interface IViewRequestDao {
     Boolean setViewRequestSeen(ViewRequestSeenData vrSeenData);
-    ViewRequestPost retrieveViewRequestPost(Integer userId);
+    ArrayList<ViewRequestPost> retrieveViewRequestPosts(Integer userId);
     Boolean sendViewRequest(SendViewRequestData sendViewRequestData);
 }

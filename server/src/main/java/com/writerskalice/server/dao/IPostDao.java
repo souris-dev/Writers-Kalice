@@ -9,6 +9,9 @@ import java.util.ArrayList;
 public interface IPostDao {
     Post retrievePost(Integer postId);
     ArrayList<Post> retrieveSavedPosts(Integer userId);
+
+    ArrayList<Post> retrieveSeenPosts(Integer userId);
+
     ArrayList<Post> retrieveFeed(Integer userId);
     ArrayList<Comment> retrieveComments(Integer postId);
 

@@ -14,7 +14,7 @@ public class ViewRequestPost extends Post {
     @Setter
     private String sentbyUsername;
 
-    @Getter
+    /*@Getter
     @Setter
-    private Date sentOn;
+    private Date sentOn;*/
 }

@@ -4,6 +4,8 @@ import './css/build/tailwind.css';
 import PopupMenuList from './PopupMenuList';
 import { Link } from 'react-router-dom';
 
+import serverUrl from './appconfig';
+
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import Post from './Post';
@@ -23,6 +25,17 @@ export default class SeenPostsPage extends React.Component {
         this.handleProfileSettings = this.handleProfileSettings.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
         this.handleVR = this.handleVR.bind(this);
+    }
+
+    componentDidMount() {
+        fetch(serverUrl + "/posts/getseenposts?userId=" + window.localStorage.getItem("wKuid"), { method: 'GET' })
+            .then((respone) => respone.json())
+            .then((data) => {
+                console.log(data);
+                this.setState({
+                    posts: data
+                });
+            });
     }
 
     handleWrite() {

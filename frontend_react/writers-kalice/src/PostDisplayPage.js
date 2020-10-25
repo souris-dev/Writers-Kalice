@@ -6,6 +6,14 @@ import Post from './Post';
 import { Link } from 'react-router-dom';
 import logo from './public/assets/logo.png';
 
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 import Comment from './Comment';
 
 import Snackbar from '@material-ui/core/Snackbar';
@@ -24,6 +32,10 @@ export default class PostDisplayPage extends React.Component {
             thisUserComment: ' ',
             thisAnonymousComment: false,
             thisUserPositiveComment: true,
+
+            sendVrToUsername: '',
+            vrDialogOpen: false,
+
             comments: [
                 // Sample data
                 {
@@ -65,6 +77,17 @@ export default class PostDisplayPage extends React.Component {
     }
 
     componentDidMount() {
+        console.log("hey!");
+        console.log(this.props.location.query.fromFeed);
+        if (this.props.location.query.fromFeed == true)
+            fetch(serverUrl + "/posts/setseen", {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: window.localStorage.getItem("wKuid"),
+                    postId: this.props.location.query.postId,
+                })
+            })
         fetch(serverUrl + '/posts/getpost?postId=' + this.props.location.query.postId, { method: 'GET' })
             .then((response => response.json()))
             .then((data) => {
@@ -263,6 +286,10 @@ export default class PostDisplayPage extends React.Component {
     }
 
     handleSavePost() {
+        console.log({
+            userId: window.localStorage.getItem("wKuid"),
+            postId: this.props.location.query.postId,
+        });
         fetch(serverUrl + '/posts/savepost', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -292,6 +319,38 @@ export default class PostDisplayPage extends React.Component {
                                 errorText: "Failed to save to collection!",
                             });
                         }
+                })
+            }
+        })
+    }
+
+    handleSendVR() {
+        console.log({
+            postId: this.props.location.query.postId,
+            usernameToSend: this.state.sendVrToUsername,
+            sentbyUid: window.localStorage.getItem("wKuid")
+        });
+        fetch(serverUrl + '/users/sendviewrequest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                postId: this.props.location.query.postId,
+                usernameToSend: this.state.sendVrToUsername,
+                sentbyUid: window.localStorage.getItem("wKuid")
+            })
+        }).then((response) => {
+            if (response.status == 200) {
+                this.setState({
+                    successText: "View request sent!",
+                    successSnkOpen: true,
+                    vrDialogOpen: false,
+                })
+            }
+            else {
+                this.setState({
+                    errorText: "Failed to send view request!",
+                    failedSnkOpen: true,
+                    vrDialogOpen: true,
                 })
             }
         })
@@ -458,7 +517,7 @@ export default class PostDisplayPage extends React.Component {
                                                 </svg>
                                             </button>{this.state.post.nnegReactions}
                                             <span className="ml-4"></span>
-                                            <button>
+                                                        <button onClick={() => this.setState({ vrDialogOpen: true })}>
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
                                                 </svg>
@@ -597,7 +656,36 @@ export default class PostDisplayPage extends React.Component {
           <Alert onClose={() => this.setState({ warnSnkOpen: false })} severity="warning">
             {this.state.warnText}
           </Alert>
-        </Snackbar>
+                </Snackbar>
+                
+                <div>
+                    <Dialog open={this.state.vrDialogOpen} onClose={() => { this.setState({vrDialogOpen: false}) }} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Send view request</DialogTitle>
+                    <DialogContent>
+                    <DialogContentText>
+                        Enter the username of the person you want to send this post to:
+                    </DialogContentText>
+                    <TextField
+                        onChange={this.handleOptions}
+                        autoFocus
+                        margin="dense"
+                        name="sendVrToUsername"
+                        id="sendVrToUsername"
+                        label="Send to? (username)"
+                        variant="outlined"
+                        fullWidth
+                    />
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={() => this.handleSendVR()} color="primary">
+                        Send
+                    </Button>
+                    <Button onClick={() => { this.setState({vrDialogOpen: false}) }} color="primary">
+                        Cancel
+                    </Button>
+                    </DialogActions>
+                </Dialog>
+                </div>
             </div>
         );
     }
