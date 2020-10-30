@@ -15,6 +15,7 @@ insert into privacy_details(show_interests, show_name, show_bio) values
 -- Interest tags
 insert into interest_tags(description) values
 ('poetry'), ('prose'), ('short_stories'), ('idle_thoughts'), ('parody'), ('jokes'), ('nature');
+insert into interest_tags(description) values ('compositions');
 
 -- Insert reactions
 insert into reactions values

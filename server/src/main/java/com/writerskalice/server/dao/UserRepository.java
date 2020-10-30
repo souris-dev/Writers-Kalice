@@ -82,9 +82,9 @@ public class UserRepository implements IUserDao {
                             resultMap.put("rankId", rs.getInt(3));
                             resultMap.put("rankDesc", rs.getString(4));
                             resultMap.put("numStars", rs.getFloat(5));
-                            resultMap.put("showName", rs.getString(7));
-                            resultMap.put("showBio", rs.getBoolean(8));
-                            resultMap.put("showInterests", rs.getBoolean(9));
+                            resultMap.put("showName", rs.getBoolean(6));
+                            resultMap.put("showBio", rs.getBoolean(7));
+                            resultMap.put("showInterests", rs.getBoolean(8));
 
                             return resultMap;
                         });
@@ -111,7 +111,7 @@ public class UserRepository implements IUserDao {
                         });
 
         Map<String, Object> res3 =
-                jdbcTemplate.queryForObject("select is_above_eighteen from profiles where user_id = 101;",
+                jdbcTemplate.queryForObject("select is_above_eighteen from profiles where user_id = ?;",
                         new Object[]{uid},
                         (rs, rowNum) -> {
                             Map<String, Object> resultMap = new HashMap<>();
@@ -174,25 +174,25 @@ public class UserRepository implements IUserDao {
     @Override
     public Boolean updateUserProfile(UpdateProfileData data) {
         Integer privacyId = jdbcTemplate.queryForObject("select detail_id from privacy_details " +
-                        "where show_interests = ?, show_name = ?, show_bio = ?",
+                        "where show_interests = ? and show_name = ? and show_bio = ?",
                 new Object[]{data.getShowInterestTags(), data.getShowName(), data.getShowBio()},
                 (rs, rn) -> rs.getInt(1));
 
         Boolean success;
 
-        success = jdbcTemplate.update("update users_table set username = ? and privacy_det = ? " +
+        success = jdbcTemplate.update("update users_table set username = ?, privacy_det_id = ? " +
                         " where user_id = ?;",
                 data.getUsername(), privacyId, data.getUid()) > 0;
 
         success = (jdbcTemplate.update("update user_email_ids set email = ? where user_id = ?;",
                 data.getEmail(), data.getUid()) > 0) && success;
 
-        success = (jdbcTemplate.update("update profiles set name = ? and about_me = ? and is_above_eighteen = ? " +
+        success = (jdbcTemplate.update("update profiles set name = ?, about_me = ?, is_above_eighteen = ? " +
                         "where user_id = ? and name = ?",
                 data.getName(), data.getBio(), data.getIsAboveEighteen(), data.getUid(), data.getName()) > 0)
                 && success;
 
-        success = (jdbcTemplate.update("update auth_helper_userauth set passwd = ? where user_id = ?",
+        success = (jdbcTemplate.update("update auth_helper_userauths set passwd = ? where user_id = ?",
                 data.getPassword(), data.getUid()) > 0) && success;
 
         // Now for profile interests

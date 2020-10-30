@@ -313,7 +313,7 @@ class SignUpPage extends React.Component {
                                                 <InterestTag onCheck={() => this.addTag("prose")} onUncheck={() => this.removeTag("prose")} itemText="Prose" />
                                                 <InterestTag onCheck={() => this.addTag("poetry")} onUncheck={() => this.removeTag("poetry")} itemText="Poetry" />
                                                 <InterestTag onCheck={() => this.addTag("short_stories")} onUncheck={() => this.removeTag("short_stories")} itemText="Short stories" />
-                                                <InterestTag onCheck={() => this.addTag("composition")} onUncheck={() => this.removeTag("composition")} itemText="Composition" />
+                                                <InterestTag onCheck={() => this.addTag("compositions")} onUncheck={() => this.removeTag("composition")} itemText="Compositions" />
                                                 <InterestTag onCheck={() => this.addTag("idle_thoughts")} onUncheck={() => this.removeTag("idle_thoughts")} itemText="Idle thoughts" />
                                                 <InterestTag onCheck={() => this.addTag("jokes")} onUncheck={() => this.removeTag("jokes")} itemText="Jokes" />
                                                 <InterestTag onCheck={() => this.addTag("parody")} onUncheck={() => this.removeTag("parody")} itemText="Parody" />

@@ -9,6 +9,8 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
 import { Link, useHistory } from 'react-router-dom';
+import serverUrl from './appconfig';
+import { tagToId } from './utils';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />
@@ -40,7 +42,39 @@ class ProfileSettingsPage extends React.Component {
     }
 
     handleSubmit() {
-        console.log(this.state);
+        console.log('submitted');
+
+        fetch(serverUrl + "/users/updateprofiledata", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: this.state.name,
+                username: localStorage.getItem("wKusername"),
+                password: localStorage.getItem("wKpassword"),
+                email: this.state.email,
+                bio: this.state.bio,
+                isAboveEighteen: this.state.isAboveEighteen,
+                showBio: this.state.showBio,
+                showName: this.state.showName,
+                showInterestTags: true,
+                uid: localStorage.getItem("wKuid"),
+                tags: this.state.interestTags.map((tag) => tagToId(tag)),
+            })
+        }).then((response) => {
+            if (response.status == 200) {
+                this.setState({
+                    successText: 'Profile updated!',
+                    successSnkOpen: true,
+                });
+                window.setTimeout(this.props.history.goBack(), 300);
+            }
+            else {
+                this.setState({
+                    failedSnkOpen: true,
+                    errorText: 'Failed to update the profile!'
+                });
+            }
+        });
     }
 
     addTag(interest) {
@@ -51,6 +85,24 @@ class ProfileSettingsPage extends React.Component {
                 interestTags: interestTags
             };
         });
+    }
+
+    componentDidMount() {
+        fetch(serverUrl + "/users/getprofilesettings?userId=" + localStorage.getItem("wKuid"), { method: 'GET' })
+            .then((response) => response.json())
+            .then((data) => {
+                this.setState((state) => {
+                    return {
+                        isAboveEighteen: data.isAboveEighteen,
+                        showBio: data.showBio,
+                        showName: data.showName,
+                        interestTags: data.interestTags == null ? [] : data.interestTags,
+                        name: data.name,
+                        email: data.email,
+                        bio: data.bio,
+                    };
+                })
+            })
     }
 
     handleWrite() {
@@ -274,7 +326,7 @@ class ProfileSettingsPage extends React.Component {
                                                 <InterestTag onCheck={() => this.addTag("prose")} onUncheck={() => this.removeTag("prose")} itemText="Prose" />
                                                 <InterestTag onCheck={() => this.addTag("poetry")} onUncheck={() => this.removeTag("poetry")} itemText="Poetry" />
                                                 <InterestTag onCheck={() => this.addTag("short_stories")} onUncheck={() => this.removeTag("short_stories")} itemText="Short stories" />
-                                                <InterestTag onCheck={() => this.addTag("composition")} onUncheck={() => this.removeTag("composition")} itemText="Composition" />
+                                                <InterestTag onCheck={() => this.addTag("compositions")} onUncheck={() => this.removeTag("composition")} itemText="Compositions" />
                                                 <InterestTag onCheck={() => this.addTag("idle_thoughts")} onUncheck={() => this.removeTag("idle_thoughts")} itemText="Idle thoughts" />
                                                 <InterestTag onCheck={() => this.addTag("jokes")} onUncheck={() => this.removeTag("jokes")} itemText="Jokes" />
                                                 <InterestTag onCheck={() => this.addTag("parody")} onUncheck={() => this.removeTag("parody")} itemText="Parody" />

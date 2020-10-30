@@ -158,12 +158,8 @@ public class GETController {
 
         try {
             return userRepository.retrieveUserProfileSettings(userId);
-        }
-        catch (EmptyResultDataAccessException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            return null;
-        }
-        catch (Exception ex) {
             return null;
         }
     }
