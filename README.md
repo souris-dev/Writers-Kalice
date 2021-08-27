@@ -7,4 +7,4 @@ Project Writer's Kalice is an aim to create a social media platform exclusively 
 The server side uses Spring Boot along with PostgreSQL as its database management system.
 
 ## Client-side
-THe client side uses React.js and Tailwind CSS.
+THe client side uses React and Tailwind CSS.
